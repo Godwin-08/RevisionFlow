@@ -1,0 +1,116 @@
+/* ================================================
+   POMODORO — styles additionnels
+   Les styles de base sont dans dashboard.css
+   Ce fichier ajoute les animations et états avancés
+================================================ */
+
+/* Animation de démarrage du cercle */
+.pomo-arc {
+    transition:
+        stroke-dashoffset 1s linear,
+        stroke 0.5s var(--ease);
+}
+
+/* Cercle qui pulse quand en cours */
+.pomo-arc.running {
+    filter: drop-shadow(0 0 6px currentColor);
+}
+
+/* Timer en urgence */
+.pomo-time.urgence {
+    color: var(--red);
+}
+
+/* Indicateur de mode actif */
+.pomo-mode-indicator {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+}
+
+.pomo-mode-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s;
+}
+
+.pomo-mode-dot.travail { background: var(--green); }
+.pomo-mode-dot.pause   { background: var(--orange); }
+.pomo-mode-dot.longue  { background: #3B82F6; }
+
+/* Historique des sessions du jour */
+.pomo-historique {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.pomo-hist-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    opacity: 0.8;
+    animation: popIn 0.3s var(--ease-back);
+}
+
+@keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 0.8; }
+}
+
+/* Notification interne au pomodoro */
+.pomo-notif {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text);
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 99px;
+    white-space: nowrap;
+    animation: notifPop 0.3s var(--ease-back);
+    pointer-events: none;
+}
+
+@keyframes notifPop {
+    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Pulse général quand le timer tourne */
+@keyframes pomoPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(45, 158, 107, 0.3); }
+    50%       { box-shadow: 0 0 0 8px rgba(45, 158, 107, 0); }
+}
+
+.pomo-ring-wrap.running {
+    animation: pomoPulse 2s ease infinite;
+    border-radius: 50%;
+}
+
+/* Mode pause — couleur orange */
+.pomo-ring-wrap.pause-mode .pomo-arc {
+    stroke: var(--orange);
+}
+
+/* Mode longue pause — bleu */
+.pomo-ring-wrap.longue-mode .pomo-arc {
+    stroke: #3B82F6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pomo-ring-wrap {
+        width: 120px;
+        height: 120px;
+    }
+
+    .pomo-time { font-size: 22px; }
+}

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RevisionFlow — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../core/variables.css">
+    <link rel="stylesheet" href="../filter/filter.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="../pomodoro/pomodoro.css">
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<div class="dash-layout" id="dash-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sb-top">
+
+            <a href="../../landing/index.html" class="sb-brand">
+                <div class="sb-logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+                        <path d="M9 11l3 3L22 4"/>
+                        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+                    </svg>
+                </div>
+                <span class="sb-brand-name">Revision<span>Flow</span></span>
+            </a>
+
+            <!-- Countdown = élément principal sidebar -->
+            <div class="sb-exam-card" id="sb-exam-card">
+                <div class="sb-exam-tag">Prochain examen</div>
+                <div class="sb-exam-nom" id="sb-exam-nom">—</div>
+                <div class="sb-exam-module" id="sb-exam-module"></div>
+                <div class="countdown-val" id="countdown-val">—</div>
+            </div>
+
+            <!-- Nav groupée -->
+            <nav class="sb-nav">
+                <button class="sb-nav-btn active" id="nav-aujourdhui" onclick="Dashboard.afficherTab('aujourdhui')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    <span>Aujourd'hui</span>
+                </button>
+                <button class="sb-nav-btn" id="nav-modules" onclick="Dashboard.afficherTab('modules')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                    <span>Modules</span>
+                </button>
+                <button class="sb-nav-btn" id="nav-calendrier" onclick="Dashboard.afficherTab('calendrier')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <span>Calendrier</span>
+                </button>
+                <button class="sb-nav-btn" id="nav-historique" onclick="window.location.href='../../history/index.html'">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>Historique</span>
+                </button>
+            </nav>
+
+            <!-- Pomodoro compact toujours visible -->
+            <div class="sb-pomo">
+                <div class="sb-pomo-header">
+                    <span class="sb-pomo-label">Timer Focus</span>
+                    <span class="sb-pomo-mode-badge" id="sb-pomo-mode">TRAVAIL</span>
+                </div>
+                <div class="sb-pomo-body">
+                    <span class="sb-pomo-time" id="sb-pomo-time">25:00</span>
+                    <div class="sb-pomo-btns">
+                        <button class="sb-pomo-btn" onclick="Pomodoro.toggle(); DashboardView.syncPomo()">
+                            <svg id="sb-pomo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="14" height="14"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        </button>
+                        <button class="sb-pomo-btn" onclick="Pomodoro.reset(); DashboardView.syncPomo()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="14" height="14"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Streak & vélocité -->
+            <div class="sb-streak" id="sb-streak"></div>
+
+        </div>
+
+        <div class="sb-bottom">
+            <button class="sb-nav-btn" id="nav-settings" onclick="Dashboard.afficherTab('settings')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                <span>Réglages</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="dash-main" id="dash-main">
+
+        <div class="mobile-header">
+            <button class="mobile-menu-btn" onclick="Dashboard.toggleSidebar()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="20" height="20"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <span class="mobile-brand">RevisionFlow</span>
+            <div class="mobile-countdown" id="mobile-countdown">—</div>
+        </div>
+
+        <!-- ===== TAB AUJOURD'HUI ===== -->
+        <div class="dash-tab active" id="tab-aujourdhui">
+            <div class="today-stats-bar">
+                <div class="today-stat">
+                    <div class="today-stat-val" id="stat-sessions">0/0</div>
+                    <div class="today-stat-lbl">Sessions du jour</div>
+                </div>
+                <div class="today-stat">
+                    <div class="today-stat-val" id="stat-global">0%</div>
+                    <div class="today-stat-lbl">Progression globale</div>
+                </div>
+                <div class="today-stat">
+                    <div class="today-stat-val" id="stat-streak">0j</div>
+                    <div class="today-stat-lbl">Streak</div>
+                </div>
+                <div class="today-stat">
+                    <div class="today-stat-val" id="stat-jours">—</div>
+                    <div class="today-stat-lbl">Prochain exam</div>
+                </div>
+            </div>
+
+            <div class="today-prog-track">
+                <div class="today-prog-fill" id="today-prog-fill"></div>
+            </div>
+
+            <div id="backlog-alert" class="backlog-alert hidden"></div>
+            <div id="filters-container" class="filters-container"></div>
+
+            <div class="today-content-row">
+                <div>
+                    <div id="today-titre" style="font-size:20px;font-weight:700;color:#0f172a;font-family:'Bricolage Grotesque',sans-serif;margin-bottom:4px"></div>
+                    <div id="today-subtitle" style="font-size:12px;color:#94a3b8;margin-bottom:14px"></div>
+                    <div class="sessions-list-large" id="sessions-list"></div>
+                    <button class="btn-anticiper" onclick="Dashboard.anticiper()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" width="15" height="15">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                        Avancer une session depuis demain
+                    </button>
+                </div>
+
+                <div>
+                    <div class="prog-card">
+                        <div class="prog-card-title">Progression du jour</div>
+                        <div class="prog-ring-area">
+                            <div class="prog-ring-wrap">
+                                <svg width="110" height="110" viewBox="0 0 110 110">
+                                    <circle cx="55" cy="55" r="44" fill="none" stroke="#e2e8f0" stroke-width="8"/>
+                                    <circle class="ring-fill" id="ring-fill" cx="55" cy="55" r="44"
+                                        fill="none" stroke="#22d3ee" stroke-width="8"
+                                        stroke-linecap="round"
+                                        stroke-dasharray="276.5" stroke-dashoffset="276.5"/>
+                                </svg>
+                                <div class="prog-ring-label"&gt;
+                                    <span class="prog-ring-pct" id="ring-pct">0%</span>
+                                    <span class="prog-ring-sub">aujourd'hui</span>
+                                </div>
+                            </div>
+                            <div class="prog-counts">
+                                <div class="prog-count-item">
+                                    <div class="prog-count-val" style="color:#2D9E6B" id="prog-done">0</div>
+                                    <div class="prog-count-lbl">faites</div>
+                                </div>
+                                <div class="prog-count-item">
+                                    <div class="prog-count-val" style="color:#94a3b8" id="prog-rest">0</div>
+                                    <div class="prog-count-lbl">restantes</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="next-days-card" style="margin-top:14px">
+                        <div class="next-days-title">Prochains jours</div>
+                        <div id="future-list" class="future-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== TAB CALENDRIER ===== -->
+        <div class="dash-tab" id="tab-calendrier">
+            <div class="card">
+                <div class="cal-dash-header">
+                    <div class="card-title">Vue calendrier</div>
+                    <div class="cal-legend-row">
+                        <span class="cal-leg todo">À faire</span>
+                        <span class="cal-leg done">Complété</span>
+                        <span class="cal-leg missed">Manqué</span>
+                        <span class="cal-leg off">Repos</span>
+                        <span class="cal-leg exam">Examen</span>
+                    </div>
+                </div>
+                <div id="cal-nav-row" class="cal-nav-row">
+                    <button class="cal-nav-btn" onclick="Dashboard.calPrev()">‹</button>
+                    <span class="cal-mois-label" id="cal-mois-label"></span>
+                    <button class="cal-nav-btn" onclick="Dashboard.calNext()">›</button>
+                </div>
+                <div id="cal-grille" class="cal-grille"></div>
+            </div>
+
+            <!-- Détail du jour cliqué -->
+            <div class="cal-day-detail hidden" id="cal-day-detail">
+                <div class="cal-day-detail-header">
+                    <span class="cal-day-detail-date" id="cal-detail-date"></span>
+                    <button class="btn btn-ghost btn-sm" onclick="document.getElementById('cal-day-detail').classList.add('hidden')">✕ Fermer</button>
+                </div>
+                <div id="cal-detail-sessions"></div>
+            </div>
+
+            <!-- Prochains examens -->
+            <div class="card" style="margin-top:1.25rem">
+                <div class="card-title">Prochains examens</div>
+                <div id="prochains-examens"></div>
+            </div>
+        </div>
+
+        <!-- ===== TAB MODULES ===== -->
+        <div class="dash-tab" id="tab-modules">
+
+            <!-- Liste en premier -->
+            <div class="card" style="margin-bottom:1.25rem">
+                <div class="card-title" style="margin-bottom:1rem">Mes modules</div>
+                <div id="modules-liste" class="modules-liste"></div>
+            </div>
+
+            <!-- Formulaire ajout en bas -->
+            <div class="card">
+                <div class="card-title" style="margin-bottom:1rem">Ajouter un module</div>
+                <div class="quick-add-grid">
+                    <div class="input-box">
+                        <input type="text" id="dash-mod-nom" placeholder="Nom du module">
+                    </div>
+                    <div class="input-box">
+                        <input type="date" id="dash-mod-date">
+                    </div>
+                    <div class="input-box">
+                        <select id="dash-mod-diff">
+                            <option value="1">Difficulté 1/5</option>
+                            <option value="2">Difficulté 2/5</option>
+                            <option value="3" selected>Difficulté 3/5</option>
+                            <option value="4">Difficulté 4/5</option>
+                            <option value="5">Difficulté 5/5</option>
+                        </select>
+                    </div>
+                    <div class="input-box">
+                        <input type="number" id="dash-mod-chap" placeholder="Nb chapitres" value="5" min="1">
+                    </div>
+                    <button class="btn btn-green" id="btn-add-mod-dash" style="width:100%">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Ajouter
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== TAB RÉGLAGES ===== -->
+        <div class="dash-tab" id="tab-settings">
+
+            <div class="card settings-section">
+                <div class="settings-section-title">Disponibilités</div>
+                <p class="settings-desc">Le planning se recalcule automatiquement après sauvegarde.</p>
+                <div class="settings-sliders">
+                    <div class="slider-row">
+                        <label>Soir en semaine</label>
+                        <div class="slider-wrap">
+                            <input type="range" id="set-h-soir" min="0" max="8" step="0.5" oninput="document.getElementById('lbl-soir').textContent=this.value+'h'">
+                            <span class="slider-val" id="lbl-soir">2h</span>
+                        </div>
+                    </div>
+                    <div class="slider-row">
+                        <label>Weekend</label>
+                        <div class="slider-wrap">
+                            <input type="range" id="set-h-weekend" min="0" max="12" step="0.5" oninput="document.getElementById('lbl-weekend').textContent=this.value+'h'">
+                            <span class="slider-val" id="lbl-weekend">6h</span>
+                        </div>
+                    </div>
+                    <div class="slider-row">
+                        <label>Durée d'une session</label>
+                        <div class="slider-wrap">
+                            <input type="range" id="set-h-session" min="0.25" max="4" step="0.25" oninput="document.getElementById('lbl-session').textContent=this.value+'h'">
+                            <span class="slider-val" id="lbl-session">1h</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-green" style="margin-top:1.5rem" onclick="Dashboard.sauvegarderSettings()">Sauvegarder</button>
+            </div>
+
+            <div class="card settings-section">
+                <div class="settings-section-title">Pays & Données</div>
+                <div class="wiz-field" style="margin-bottom:1rem">
+                    <label class="wiz-label">Pays (jours fériés)</label>
+                    <div class="input-box">
+                        <select id="sb-pays-select" onchange="Dashboard.changerPays(this.value)"></select>
+                    </div>
+                </div>
+                <div class="settings-data-row">
+                    <span class="settings-data-info" id="settings-data-info">Données locales</span>
+                    <div style="display:flex;gap:8px">
+                        <button class="btn btn-ghost btn-sm" onclick="Storage.exporterJSON()">Exporter</button>
+                        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('import-input').click()">Importer</button>
+                    </div>
+                </div>
+                <button class="btn btn-ghost btn-sm" style="margin-top:0.75rem" onclick="Dashboard.toggleTheme()">Changer de thème</button>
+                <input type="file" id="import-input" accept=".json" style="display:none">
+            </div>
+
+            <div class="card settings-section danger-zone">
+                <div class="settings-section-title danger-title">Zone de danger</div>
+                <p class="settings-desc">Supprime toutes tes données de révision. Action irréversible.</p>
+                <button class="btn btn-danger" onclick="Dashboard.reinitialiser()">Réinitialiser tout le planning</button>
+            </div>
+
+        </div>
+
+    </main>
+</div>
+
+<!-- MODAL NOTE -->
+<div class="modal-overlay hidden" id="modal-note">
+    <div class="modal-box">
+        <div class="modal-title" id="modal-note-titre">Note</div>
+        <textarea class="notes-area modal-note-area" id="modal-note-area" placeholder="Tes remarques..."></textarea>
+        <div class="modal-foot">
+            <button class="btn btn-ghost btn-sm" onclick="Dashboard.fermerModalNote()">Annuler</button>
+            <button class="btn btn-green btn-sm" onclick="Dashboard.sauvegarderModalNote()">Sauvegarder</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDIT DATE -->
+<div class="modal-overlay hidden" id="modal-edit-exam">
+    <div class="modal-box">
+        <div class="modal-title">Modifier la date d'examen</div>
+        <div class="modal-module-name" id="modal-edit-nom"></div>
+        <div class="wiz-field" style="margin-top:1rem">
+            <label class="wiz-label">Nouvelle date</label>
+            <div class="input-box">
+                <input type="date" id="modal-edit-date">
+            </div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn btn-ghost btn-sm" onclick="Dashboard.fermerModalEdit()">Annuler</button>
+            <button class="btn btn-green btn-sm" onclick="Dashboard.sauvegarderEditDate()">Mettre à jour</button>
+        </div>
+    </div>
+</div>
+
+<!-- MENU CONTEXTUEL SESSION -->
+<div class="session-ctx-menu hidden" id="session-ctx-menu">
+    <button class="session-ctx-item" id="ctx-reporter">Reporter cette session</button>
+    <button class="session-ctx-item" id="ctx-note">Ajouter une note</button>
+</div>
+
+<!-- FAB -->
+<button class="jour-libre-fab" onclick="Dashboard.declarerJourLibre()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    Jour libre
+</button>
+
+<script src="../../core/state.js"></script>
+<script src="../../core/ui.js"></script>
+<script src="../../core/planning.js"></script>
+<script src="../../core/storage.js"></script>
+<script src="../pomodoro/pomodoro.js"></script>
+<script src="../filter/filter.js"></script>
+<script src="dashboard-view.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

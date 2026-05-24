@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RevisionFlow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <meta http-equiv="refresh" content="0; url=../components/wizard/wizard.html">
+    <link rel="stylesheet" href="../core/variables.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .loader {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            border: 3px solid var(--border);
+            border-top-color: var(--green);
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loader-txt {
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-2);
+            letter-spacing: -0.2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="loader"></div>
+    <div class="loader-txt">Chargement...</div>
+
+    <script>window.location.replace('../components/wizard/wizard.html');</script>
+</body>
+</html>

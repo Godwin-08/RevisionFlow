@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RevisionFlow — Réussis tes examens sans stress</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800;12..96,900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../core/variables.css">
+    <link rel="stylesheet" href="landing.css">
+</head>
+<body>
+
+<!-- INDICATEUR DE LECTURE -->
+<div id="scroll-progress" style="position: fixed; top: 0; left: 0; height: 3px; background: var(--primary); z-index: 1000; width: 0%; transition: width 0.1s linear;"></div>
+
+<!-- NAVBAR -->
+<nav class="nav" id="navbar">
+    <a href="#" class="nav-brand">
+        <div class="nav-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+                <path d="M9 11l3 3L22 4"/>
+                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+            </svg>
+        </div>
+        <span class="nav-name">Revision<span>Flow</span></span>
+    </a>
+    <div class="nav-links">
+        <a href="#features" class="nav-link">Fonctionnalités</a>
+        <a href="#how"      class="nav-link">Méthode</a>
+    </div>
+    <a href="../components/wizard/wizard.html" class="nav-cta">Commencer</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-bg">
+        <div class="hero-grid"></div>
+        <div class="hero-parallax-layer" data-speed="0.2">
+            <div class="hero-circle hero-circle-1"></div>
+        </div>
+        <div class="hero-parallax-layer" data-speed="-0.1">
+            <div class="hero-circle hero-circle-2"></div>
+        </div>
+    </div>
+
+    <div class="hero-content">
+        <div class="hero-badge reveal">
+            <div class="hero-badge-dot"></div>
+            Le futur de tes révisions
+        </div>
+
+        <h1 class="hero-title reveal">
+            Planifie moins.<br>
+            <span class="accent">Révise</span> mieux.
+        </h1>
+
+        <p class="hero-sub reveal">
+            Génère un planning intelligent basé sur tes dates d'examen et ta charge réelle. Sans compte, sans stress.
+        </p>
+
+        <div class="hero-actions reveal">
+            <a href="../components/wizard/wizard.html" class="btn-primary">
+                Créer mon planning
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+            <a href="#problem" class="btn-secondary">Pourquoi RevisionFlow ?</a>
+        </div>
+    </div>
+
+    <!-- PREVIEW DASHBOARD (FONDUE DYNAMIQUE) -->
+    <div class="hero-preview">
+        <div class="preview-frame">
+            <div class="preview-bar">
+                <div class="preview-dot"></div>
+                <div class="preview-dot"></div>
+                <div class="preview-dot"></div>
+                <div class="preview-url">Tableau de bord — 68% complété</div>
+            </div>
+            <div class="mini-dash">
+                <div class="mini-sidebar">
+                    <div class="mini-exam-card">
+                        <div class="mini-exam-label">Next</div>
+                        <div class="mini-exam-name">Analyse</div>
+                        <div class="mini-countdown">J-5</div>
+                    </div>
+                    <div class="mini-nav-item active"><div class="mini-nav-dot"></div>Focus</div>
+                    <div class="mini-nav-item"><div class="mini-nav-dot"></div>Plan</div>
+                </div>
+                <div class="mini-main">
+                    <div class="mini-stat-row">
+                        <div class="mini-stat"><div class="mini-stat-val" id="s1">0</div><div class="mini-stat-lbl">Modules</div></div>
+                        <div class="mini-stat"><div class="mini-stat-val" id="s2">0</div><div class="mini-stat-lbl">Prêts</div></div>
+                        <div class="mini-stat"><div class="mini-stat-val" id="s3">0</div><div class="mini-stat-lbl">J-Jours</div></div>
+                    </div>
+                    <div class="mini-progress-track"><div class="mini-progress-fill" id="prog"></div></div>
+                    <div class="mini-card">
+                        <div class="mini-module-row"><div class="mini-check done"></div><div class="mini-module-name">Analyse</div><span class="mini-priority med">Check</span></div>
+                        <div class="mini-module-row"><div class="mini-check"></div><div class="mini-module-name">Algo</div><span class="mini-priority high">Urgent</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- STATS BAND -->
+<div class="stats-band">
+    <div class="stat-item"><div class="stat-number">3x</div><div class="stat-label">Productivité</div></div>
+    <div class="stat-item"><div class="stat-number">100%</div><div class="stat-label">Adaptatif</div></div>
+    <div class="stat-item"><div class="stat-number">0</div><div class="stat-label">Complexité</div></div>
+    <div class="stat-item"><div class="stat-number">J-0</div><div class="stat-label">Zéro Panique</div></div>
+</div>
+
+<!-- PROBLÈME -->
+<section class="section" id="problem">
+    <div class="section-inner">
+        <div class="section-tag red">L'Analyse des freins</div>
+        <h2 class="section-title">Pourquoi tes plannings échouent ?</h2>
+        <p class="section-sub reveal">Finissons-en avec les agendas rigides qui ne survivent pas aux imprévus.</p>
+        
+        <div class="problem-grid">
+            <div class="problem-card">
+                <div class="problem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M2 12h20"/></svg></div>
+                <div class="problem-title">Incertitude</div>
+                <div class="problem-desc">Ne pas savoir par quoi commencer tue ton élan créatif.</div>
+            </div>
+            <div class="problem-card">
+                <div class="problem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 3L21 7L17 11M7 21L3 17L7 13"/></svg></div>
+                <div class="problem-title" style="color:var(--warning)">Imprévus</div>
+                <div class="problem-desc">Un changement de date et ton planning papier est à jeter.</div>
+            </div>
+            <div class="problem-card">
+                <div class="problem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
+                <div class="problem-title" style="color:var(--danger)">Surcharge</div>
+                <div class="problem-desc">Trop de chapitres, pas assez de temps : l'effet panique.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+    <div class="section-inner">
+        <div class="section-tag green">La Solution RevisionFlow</div>
+        <h2 class="section-title">L'intelligence au service de ta réussite.</h2>
+        <p class="section-sub reveal">Un moteur algorithmique qui travaille pour toi.</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+                <div class="feature-title">Priorité Dynamique</div>
+                <div class="feature-desc">L'algo priorise les modules selon l'urgence et la difficulté réelle.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M2 12h20"/></svg></div>
+                <div class="feature-title">Entrelacement</div>
+                <div class="feature-desc">Rotation automatique des matières pour éviter la saturation mentale.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+                <div class="feature-title">Backlog Transparent</div>
+                <div class="feature-desc">Si le planning est irréaliste, l'app te prévient. Pas de fausses promesses.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MÉTHODE -->
+<section class="section" id="how">
+    <div class="section-inner">
+        <div class="section-tag primary">La Méthode Express</div>
+        <h2 class="section-title">Ton planning en 3 étapes.</h2>
+
+        <div class="steps-grid">
+            <div class="step-item"><div class="step-number">1</div><div class="step-title">Modules</div><div class="step-desc">Nom, date d'examen, difficulté.</div></div>
+            <div class="step-item"><div class="step-number">2</div><div class="step-title">Temps</div><div class="step-desc">Heures disponibles soir & weekend.</div></div>
+            <div class="step-item"><div class="step-number">3</div><div class="step-title">Go !</div><div class="step-desc">Suis la timeline générée.</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="cta-circle cta-circle-1"></div>
+    <div class="cta-circle cta-circle-2"></div>
+    <div class="cta-content reveal">
+        <h2 class="cta-title">Reprends le contrôle.</h2>
+        <p class="cta-sub">Rejoins les étudiants qui révisent sans paniquer.</p>
+        <a href="../components/wizard/wizard.html" class="btn-cta">
+            Lancer mon planning
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+        </a>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-brand">
+        <div class="footer-logo"></div>
+        <div class="footer-name">RevisionFlow</div>
+    </div>
+    <div class="footer-copy">ENSA Khouribga 2025</div>
+</footer>
+
+<script src="landing.js"></script>
+</body>
+</html>

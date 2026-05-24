@@ -1,0 +1,254 @@
+/* ================================================
+   FILTERS — panneau de filtres combinables
+================================================ */
+
+.filters-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 1.25rem;
+    animation: fadeUp 0.3s var(--ease);
+}
+
+/* Groupe */
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-group-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Chips statut et module */
+.filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.filter-chip {
+    padding: 5px 14px;
+    border-radius: var(--radius-full);
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: all 0.15s var(--ease);
+    white-space: nowrap;
+}
+
+.filter-chip:hover {
+    border-color: var(--green-mid);
+    color: var(--green-dark);
+    background: var(--green-light);
+}
+
+.filter-chip.active {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+    box-shadow: 0 2px 6px rgba(45, 158, 107, 0.3);
+}
+
+/* Semaines */
+.filter-semaines {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.filter-sem-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-2);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    width: 100%;
+    position: relative;
+}
+
+.filter-sem-btn:hover {
+    border-color: var(--green-mid);
+    background: var(--green-light);
+    color: var(--green-dark);
+}
+
+.filter-sem-btn.active {
+    border-color: var(--green);
+    background: var(--green-light);
+    color: var(--green-dark);
+    font-weight: 600;
+}
+
+.filter-sem-nom {
+    flex: 1;
+    font-weight: 500;
+}
+
+.filter-sem-pct {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--green);
+    min-width: 32px;
+    text-align: right;
+}
+
+.filter-sem-track {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--border);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    overflow: hidden;
+}
+
+.filter-sem-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 99px;
+    transition: width 0.6s var(--ease);
+}
+
+/* Filtres actifs */
+.filter-actifs {
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+}
+
+.filter-actifs-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.filter-actifs-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.filter-actif-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px 4px 12px;
+    background: var(--green-light);
+    border: 1px solid var(--green-mid);
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--green-dark);
+}
+
+.filter-actif-rm {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--green-dark);
+    display: flex;
+    align-items: center;
+    padding: 1px;
+    border-radius: 3px;
+    transition: all 0.15s;
+    opacity: 0.6;
+}
+
+.filter-actif-rm:hover {
+    opacity: 1;
+    background: rgba(45, 158, 107, 0.15);
+}
+
+.filter-reset-all {
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    border: 1px dashed var(--border-2);
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-3);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.filter-reset-all:hover {
+    border-color: var(--red-mid);
+    color: var(--red);
+    background: var(--red-light);
+}
+
+/* Bouton toggle filtres */
+.filters-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 14px;
+    border-radius: var(--radius-full);
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.filters-toggle:hover {
+    border-color: var(--green-mid);
+    color: var(--green-dark);
+    background: var(--green-light);
+}
+
+.filters-toggle.actif {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+}
+
+.filters-toggle svg { width: 13px; height: 13px; }
+
+.filters-toggle-badge {
+    background: var(--orange);
+    color: white;
+    border-radius: 99px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    line-height: 1.4;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .filter-chips    { gap: 4px; }
+    .filter-chip     { font-size: 12px; padding: 4px 10px; }
+    .filter-semaines { max-height: 150px; }
+}

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RevisionFlow — Historique</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../core/variables.css">
+    <link rel="stylesheet" href="history.css">
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<!-- HEADER -->
+<header class="hist-header">
+    <a href="../components/dashboard/dashboard.html" class="hist-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" width="16" height="16">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Retour au dashboard
+    </a>
+    <div class="hist-brand">
+        <div class="hist-logo"></div>
+        <span>RevisionFlow</span>
+    </div>
+</header>
+
+<!-- CONTENU -->
+<div class="hist-body">
+
+    <div class="hist-page-head">
+        <h1 class="hist-page-title">Historique</h1>
+        <p class="hist-page-sub">
+            Tes 5 derniers plannings archivés. Lecture seule.
+        </p>
+    </div>
+
+    <!-- Vide -->
+    <div class="hist-empty hidden" id="hist-empty">
+        <div class="hist-empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.5" stroke-linecap="round" width="48" height="48">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+            </svg>
+        </div>
+        <div class="hist-empty-title">Aucun historique</div>
+        <div class="hist-empty-desc">
+            Termine et archive un planning pour le voir apparaître ici.
+        </div>
+        <a href="../components/wizard/wizard.html" class="btn btn-green" style="margin-top:1.5rem">
+            Créer un planning
+        </a>
+    </div>
+
+    <!-- Liste -->
+    <div id="hist-liste"></div>
+
+    <!-- Panneau de détail (lecture seule) -->
+    <div class="hist-detail hidden" id="hist-detail">
+        <div class="hist-detail-header">
+            <div>
+                <div class="hist-detail-date" id="hd-date"></div>
+                <div class="hist-detail-titre" id="hd-titre">Détail du planning</div>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="History.fermerDetail()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2.5" stroke-linecap="round" width="14" height="14">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6"  y1="6" x2="18" y2="18"/>
+                </svg>
+                Fermer
+            </button>
+        </div>
+
+        <!-- Stats archivées -->
+        <div class="hd-stats" id="hd-stats"></div>
+
+        <!-- Modules archivés -->
+        <div class="hd-section-title">Modules</div>
+        <div id="hd-modules"></div>
+
+        <!-- Bandeau lecture seule -->
+        <div class="hd-readonly-banner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" width="15" height="15">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0110 0v4"/>
+            </svg>
+            Planning archivé — lecture seule. Aucune modification possible.
+        </div>
+    </div>
+
+</div><!-- /hist-body -->
+
+<script src="../core/state.js"></script>
+<script src="../core/ui.js"></script>
+<script src="../core/planning.js"></script>
+<script src="../core/storage.js"></script>
+<script src="history.js"></script>
+</body>
+</html>
