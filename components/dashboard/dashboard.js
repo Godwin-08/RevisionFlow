@@ -88,7 +88,7 @@ const Dashboard = (() => {
             if (mobileEl) mobileEl.textContent = texte;
 
             // Mise à jour des alertes visuelles (couleurs)
-            const box = document.getElementById('countdown-box');
+            const box = document.getElementById('countdown-val');
             if (box) {
                 box.classList.remove('alerte', 'critique');
                 if (urgence === 'alerte') box.classList.add('alerte');

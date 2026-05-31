@@ -33,11 +33,6 @@ const DashboardView = (() => {
 
         rendreStats(state) {
             const pct = state.stats.pourcentage || 0;
-            const ring = document.getElementById('ring-fill');
-            if (ring) {
-                const c = 188.5;
-                ring.style.strokeDashoffset = c - (pct / 100) * c;
-            }
             const pctEl = document.getElementById('ring-pct');
             if (pctEl) pctEl.textContent = pct + '%';
         },
@@ -161,9 +156,9 @@ const DashboardView = (() => {
             const score = session.scoreSnapshot || 0;
             const pKey  = Planning.labelPriorite(score);
             const pMeta = {
-                high:   { bg: '#fef2f2', color: '#991b1b', label: 'Priorité Haute'  },
-                medium: { bg: '#fff7ed', color: '#9a3412', label: 'Priorité Moyenne'  },
-                low:    { bg: '#f0fdf4', color: '#166534', label: 'Basse'  }
+                high:   { cls: 'prio-haute',   lbl: 'Priorité Haute' },
+                medium: { cls: 'prio-moyenne', lbl: 'Priorité Moyenne' },
+                low:    { cls: 'prio-basse',   lbl: 'Basse' }
             }[pKey];
 
             const joursAvantExam = mod.dateExam
@@ -171,16 +166,16 @@ const DashboardView = (() => {
                 : null;
 
             return `
-            <div class="session-item-large ${session.faite ? 'is-done' : ''}"
+            <div class="session-item-large ${session.faite ? 'is-done' : ''}" 
                  style="animation-delay:${idx * 60}ms"
-                 onclick="Dashboard.toggleSession('${date}','${mod.id}', '${session.id}')">
+                 role="article" 
+                 aria-label="Session de ${mod.nom}">
                 <div class="session-accent-bar" style="background:${mod.couleur}"></div>
                 <div class="session-card-main">
                     <div class="session-mod-name ${session.faite ? 'done' : ''}">${mod.nom}</div>
                     <div class="session-prio-row">
-                        <span class="session-prio-badge"
-                              style="background:${pMeta.bg};color:${pMeta.color}">
-                            ${pMeta.label}
+                        <span class="session-prio-badge ${pMeta.cls}" aria-label="Priorité : ${pMeta.lbl}">
+                            ${pMeta.lbl}
                         </span>
                         <span class="session-time-meta">${UI.formaterDuree(session.dureeH)}</span>
                         ${joursAvantExam !== null
@@ -197,7 +192,9 @@ const DashboardView = (() => {
                             <circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>
                         </svg>
                     </button>
-                    <div class="session-check-circle ${session.faite ? 'done' : ''}">
+                    <div class="session-check-circle ${session.faite ? 'done' : ''}" 
+                         title="Marquer comme fait"
+                         onclick="Dashboard.toggleSession('${date}','${mod.id}', '${session.id}')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                              stroke-width="3" stroke-linecap="round" width="18" height="18">
                             <polyline points="20 6 9 17 4 12"/>
@@ -215,9 +212,17 @@ const DashboardView = (() => {
             const menu = document.getElementById('session-ctx-menu');
             if (!menu) return;
 
+            const menuWidth = 180;
+            const viewportWidth = window.innerWidth;
+            let left = event.clientX - 160;
+            
+            // Empêcher le débordement à droite
+            if (left + menuWidth > viewportWidth) left = viewportWidth - menuWidth - 10;
+            if (left < 10) left = 10;
+
             menu.classList.remove('hidden');
             menu.style.top  = (event.clientY + 4) + 'px';
-            menu.style.left = (event.clientX - 160) + 'px';
+            menu.style.left = left + 'px';
 
             document.getElementById('ctx-reporter').onclick = () => {
                 Dashboard.reporterSession(this._ctxDate, this._ctxModuleId);
@@ -255,7 +260,12 @@ const DashboardView = (() => {
                     if (!mod) return '';
                     return `<span class="future-session-chip" style="border-left-color:${mod.couleur}">${mod.nom}</span>`;
                 }).join('');
-                return `<div class="future-day-item">
+                return `<div class="future-day-item" 
+                             role="button" 
+                             tabindex="0" 
+                             aria-label="Sessions du ${label}"
+                             onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); this.click(); }"
+                             onclick="DashboardView.ouvrirDetailJour('${jour.date}')">
                     <span class="future-day-label">${label}</span>
                     <div class="future-sessions">${chips}</div>
                 </div>`;
@@ -302,7 +312,11 @@ const DashboardView = (() => {
                 }
 
                 cellules += `<div class="${cls}"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Détail du ${d} ${UI.NOMS_MOIS[this.calState.mois]}"
                     onclick="DashboardView.ouvrirDetailJour('${str}')"
+                    onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); this.click(); }"
                     ${exam ? `title="Examen : ${exam.nom}"` : ''}>
                     <div class="cal-day-num">${d}</div>${dots}
                 </div>`;
@@ -334,10 +348,10 @@ const DashboardView = (() => {
                 sessEl.innerHTML = jour.sessions.map(s => {
                     const mod = modMap[s.moduleId];
                     if (!mod) return '';
-                    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
-                        <div style="width:8px;height:8px;border-radius:50%;background:${mod.couleur};flex-shrink:0"></div>
-                        <span style="flex:1;font-size:14px;font-weight:500;color:var(--text)">${mod.nom}</span>
-                        <span style="font-size:12px;padding:2px 8px;border-radius:99px;background:${s.faite ? 'var(--green-light)' : 'var(--bg)'};color:${s.faite ? 'var(--green-dark)' : 'var(--text-3)'}">${s.faite ? 'Fait' : 'À faire'}</span>
+                    return `<div class="cal-detail-item">
+                        <div class="cal-detail-dot" style="background:${mod.couleur}"></div>
+                        <span class="cal-detail-name">${mod.nom}</span>
+                        <span class="cal-detail-badge ${s.faite ? 'done' : ''}">${s.faite ? 'Fait' : 'À faire'}</span>
                     </div>`;
                 }).join('');
             }
@@ -387,16 +401,28 @@ const DashboardView = (() => {
                 return;
             }
 
+            // --- OPTIMISATION : Une seule boucle sur le plan O(J*S) ---
+            const modStatsMap = {};
+            state.modules.forEach(m => modStatsMap[m.id] = { total: 0, faites: 0 });
+            
+            state.plan.forEach(j => {
+                j.sessions.forEach(s => {
+                    if (modStatsMap[s.moduleId]) {
+                        modStatsMap[s.moduleId].total++;
+                        if (s.faite) modStatsMap[s.moduleId].faites++;
+                    }
+                });
+            });
+
             const statsModule = {};
             state.modules.forEach(m => {
-                let total = 0, faites = 0;
-                state.plan.forEach(j => j.sessions.forEach(s => {
-                    if (s.moduleId === m.id) { total++; if (s.faite) faites++; }
-                }));
+                const ms = modStatsMap[m.id];
                 const restantes = Math.max(0, (m.chapitres || 5) - (m.sessionsValidees || 0));
                 statsModule[m.id] = {
-                    total, faites, restantes,
-                    pct: total > 0 ? Math.round((faites / total) * 100) : 0,
+                    total: ms.total, 
+                    faites: ms.faites, 
+                    restantes,
+                    pct: ms.total > 0 ? Math.round((ms.faites / ms.total) * 100) : 0,
                     score: Planning.calculerScore(m, null)
                 };
             });
@@ -408,10 +434,10 @@ const DashboardView = (() => {
             container.innerHTML = tries.map((mod, i) => {
                 const s    = statsModule[mod.id];
                 const pKey = Planning.labelPriorite(s.score);
-                const pColors = {
-                    high:   { bg: '#FEE2E2', color: '#991b1b' },
-                    medium: { bg: '#FEF3C7', color: '#92400e' },
-                    low:    { bg: '#D1FAE5', color: '#065f46' }
+                const pMeta = {
+                    high:   { cls: 'prio-haute',   lbl: 'Priorité Haute' },
+                    medium: { cls: 'prio-moyenne', lbl: 'Priorité Moyenne' },
+                    low:    { cls: 'prio-basse',   lbl: 'Basse' }
                 }[pKey];
                 const joursAvantExam = mod.dateExam
                     ? Math.max(0, Math.ceil((new Date(mod.dateExam) - new Date()) / 86400000))
@@ -424,9 +450,8 @@ const DashboardView = (() => {
                             <div class="mod-nom">${mod.nom}</div>
                         </div>
                         <div class="mod-right">
-                            <span class="mod-score-badge"
-                                  style="background:${pColors.bg};color:${pColors.color}">
-                                ${pKey}
+                            <span class="mod-score-badge ${pMeta.cls}">
+                                ${pMeta.lbl}
                             </span>
                             <span class="mod-date-exam">
                                 ${UI.formaterDate(mod.dateExam, { day: 'numeric', month: 'short' })}
@@ -497,7 +522,12 @@ const DashboardView = (() => {
             const m = Math.floor(restant / 60);
             const s = restant % 60;
             timeEl.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-            if (modeEl) modeEl.textContent = ({ travail: 'TRAVAIL', pause: 'PAUSE', longue: 'PAUSE LONGUE' }[mode] || 'TRAVAIL');
+            if (modeEl) {
+                modeEl.textContent = ({ travail: 'TRAVAIL', pause: 'PAUSE', longue: 'PAUSE LONGUE' }[mode] || 'TRAVAIL');
+                modeEl.classList.remove('pause', 'longue');
+                if (mode === 'pause') modeEl.classList.add('pause');
+                if (mode === 'longue') modeEl.classList.add('longue');
+            }
             if (iconEl) {
                 iconEl.innerHTML = enCours
                     ? `<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>`

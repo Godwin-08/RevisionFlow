@@ -34,9 +34,9 @@
             <!-- Countdown = élément principal sidebar -->
             <div class="sb-exam-card" id="sb-exam-card">
                 <div class="sb-exam-tag">Prochain examen</div>
-                <div class="sb-exam-nom" id="sb-exam-nom">—</div>
-                <div class="sb-exam-module" id="sb-exam-module"></div>
                 <div class="countdown-val" id="countdown-val">—</div>
+                <div class="sb-exam-module" id="sb-exam-module"></div>
+                <div class="sb-exam-nom" id="sb-exam-nom">—</div>
             </div>
 
             <!-- Nav groupée -->
@@ -66,7 +66,7 @@
                     <span class="sb-pomo-mode-badge" id="sb-pomo-mode">TRAVAIL</span>
                 </div>
                 <div class="sb-pomo-body">
-                    <span class="sb-pomo-time" id="sb-pomo-time">25:00</span>
+                    <span class="sb-pomo-time" id="pomo-time">25:00</span>
                     <div class="sb-pomo-btns">
                         <button class="sb-pomo-btn" onclick="Pomodoro.toggle(); DashboardView.syncPomo()">
                             <svg id="sb-pomo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="14" height="14"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -152,11 +152,11 @@
                                 <svg width="110" height="110" viewBox="0 0 110 110">
                                     <circle cx="55" cy="55" r="44" fill="none" stroke="#e2e8f0" stroke-width="8"/>
                                     <circle class="ring-fill" id="ring-fill" cx="55" cy="55" r="44"
-                                        fill="none" stroke="#22d3ee" stroke-width="8"
-                                        stroke-linecap="round"
+                                fill="none" stroke="#2D9E6B" stroke-width="8"
+                                stroke-linecap="round"
                                         stroke-dasharray="276.5" stroke-dashoffset="276.5"/>
                                 </svg>
-                                <div class="prog-ring-label"&gt;
+                                <div class="prog-ring-label">
                                     <span class="prog-ring-pct" id="ring-pct">0%</span>
                                     <span class="prog-ring-sub">aujourd'hui</span>
                                 </div>
@@ -291,6 +291,14 @@
             </div>
 
             <div class="card settings-section">
+                <div class="settings-section-title">Apparence</div>
+                <button class="btn btn-ghost" style="width:100%; justify-content: space-between;" onclick="Dashboard.toggleTheme()">
+                    <span>Mode Sombre / Clair</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </button>
+            </div>
+
+            <div class="card settings-section">
                 <div class="settings-section-title">Pays & Données</div>
                 <div class="wiz-field" style="margin-bottom:1rem">
                     <label class="wiz-label">Pays (jours fériés)</label>
@@ -305,7 +313,6 @@
                         <button class="btn btn-ghost btn-sm" onclick="document.getElementById('import-input').click()">Importer</button>
                     </div>
                 </div>
-                <button class="btn btn-ghost btn-sm" style="margin-top:0.75rem" onclick="Dashboard.toggleTheme()">Changer de thème</button>
                 <input type="file" id="import-input" accept=".json" style="display:none">
             </div>
 
