@@ -5,14 +5,14 @@
 :root {
 
     /* --- Palette Sémantique Deep Tech --- */
-    --accent-primary:  #22d3ee; /* Cyan */
-    --accent-secondary: #a855f7; /* Violet */
-    --success:         #10b981; /* Emerald */
-    --warning:         #f59e0b; /* Amber */
-    --danger:          #ef4444; /* Red */
-    --info:            #3b82f6; /* Blue */
+    --accent-primary:   #22d3ee;
+    --accent-secondary: #a855f7;
+    --success:          #10b981;
+    --warning:          #f59e0b;
+    --danger:           #ef4444;
+    --info:             #3b82f6;
 
-    /* --- Thème Clair (Correction Conflit) --- */
+    /* --- Thème Clair --- */
     --bg:             #f8fafc;
     --bg-alt:         #f1f5f9;
     --bg-gradient:    linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
@@ -26,12 +26,13 @@
     --glass-blur:     blur(12px);
     --neon-shadow:    0 0 15px rgba(34, 211, 238, 0.3);
 
-    /* --- Couleurs secondaires --- */
+    /* --- Orange --- */
     --orange:         #E8730A;
     --orange-dark:    #c45e06;
     --orange-light:   #fff3e8;
     --orange-mid:     #fdd5a8;
 
+    /* --- Red --- */
     --red:            #D92B2B;
     --red-dark:       #b91c1c;
     --red-light:      #fee2e2;
@@ -42,7 +43,7 @@
     --text-3:         #94a3b8;
     --border-2:       #cbd5e1;
 
-    /* --- Vert (identique à --success) --- */
+    /* --- Vert --- */
     --green:          #2D9E6B;
     --green-dark:     #1a7a50;
     --green-light:    #ecfdf5;
@@ -58,9 +59,9 @@
     --success-gradient: linear-gradient(135deg, #10b981, #34d399);
 
     /* --- Typographie --- */
-    --font-display:   'Bricolage Grotesque', sans-serif;
-    --font-body:      'Plus Jakarta Sans', sans-serif;
-    --font-mono:      'JetBrains Mono', 'Fira Code', monospace;
+    --font-display: 'Bricolage Grotesque', sans-serif;
+    --font-body:    'Plus Jakarta Sans', sans-serif;
+    --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
 
     /* --- Espacements --- */
     --space-xs:  4px;
@@ -71,20 +72,17 @@
     --space-2xl: 64px;
 
     /* --- Bordures --- */
-    --radius-sm:  8px;
-    --radius-md:  12px;
-    --radius-lg:  16px;
-    --radius-xl:  20px;
+    --radius-sm:   8px;
+    --radius-md:   12px;
+    --radius-lg:   16px;
+    --radius-xl:   20px;
     --radius-full: 999px;
 
     /* --- Ombres --- */
-    --shadow-sm:  0 1px 3px rgba(15, 28, 46, 0.06),
-                  0 1px 2px rgba(15, 28, 46, 0.04);
-    --shadow-md:  0 4px 16px rgba(15, 28, 46, 0.07),
-                  0 1px 4px  rgba(15, 28, 46, 0.04);
-    --shadow-lg:  0 10px 40px rgba(15, 28, 46, 0.09),
-                  0 4px  12px rgba(15, 28, 46, 0.05);
-    --shadow-green: 0 4px 16px rgba(45, 158, 107, 0.25);
+    --shadow-sm:  0 1px 3px rgba(15, 28, 46, 0.06), 0 1px 2px rgba(15, 28, 46, 0.04);
+    --shadow-md:  0 4px 16px rgba(15, 28, 46, 0.07), 0 1px 4px rgba(15, 28, 46, 0.04);
+    --shadow-lg:  0 10px 40px rgba(15, 28, 46, 0.09), 0 4px 12px rgba(15, 28, 46, 0.05);
+    --shadow-green:  0 4px 16px rgba(45, 158, 107, 0.25);
     --shadow-orange: 0 4px 16px rgba(232, 115, 10, 0.25);
 
     /* --- Animations --- */
@@ -97,7 +95,7 @@
     --duration-slow:   500ms;
 
     /* --- Z-index --- */
-    --z-base:    1;
+    --z-base:     1;
     --z-dropdown: 10;
     --z-sidebar:  40;
     --z-modal:    80;
@@ -105,7 +103,7 @@
 }
 
 /* ================================================
-   RESET GLOBAL — inclure une seule fois
+   RESET GLOBAL — une seule fois ici
 ================================================ */
 *, *::before, *::after {
     box-sizing: border-box;
@@ -135,13 +133,12 @@ body {
    UTILITAIRES GLOBAUX
 ================================================ */
 
-/* Texte */
 .text-green  { color: var(--green); }
 .text-orange { color: var(--orange); }
 .text-red    { color: var(--danger); }
 .text-muted  { color: var(--text-2); }
 
-/* Badges statut */
+/* Badges */
 .badge {
     display: inline-flex;
     align-items: center;
@@ -153,20 +150,20 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
-
 .badge-green  { background: var(--green-light);  color: var(--green-dark); }
 .badge-orange { background: var(--orange-light); color: var(--orange-dark); }
 .badge-red    { background: var(--red-light);    color: var(--red-dark); }
-.badge-muted  { background: var(--bg);           color: var(--text-2);
-                border: 1px solid var(--border); }
+.badge-muted  { background: var(--bg); color: var(--text-2); border: 1px solid var(--border); }
 
 /* Priorité */
 .priority-high   { background: var(--orange-light); color: var(--orange-dark); }
-.priority-medium { background: rgba(34, 211, 238, 0.1);  color: var(--cyan); }
-.priority-low    { background: var(--bg);           color: var(--text-2);
-                   border: 1px solid var(--border); }
+.priority-medium { background: rgba(34, 211, 238, 0.1); color: var(--cyan); }
+.priority-low    { background: var(--bg); color: var(--text-2); border: 1px solid var(--border); }
 
-/* Boutons globaux */
+/* ================================================
+   BOUTONS — source unique de vérité
+   dashboard.css et wizard.css ne redéfinissent PAS .btn
+================================================ */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -183,7 +180,6 @@ body {
     text-decoration: none;
     white-space: nowrap;
 }
-
 .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
 
 .btn-green {
@@ -191,13 +187,11 @@ body {
     color: white;
     box-shadow: var(--shadow-green);
 }
-
 .btn-green:hover {
     background: var(--green-dark);
     transform: translateY(-1px);
     box-shadow: 0 6px 20px rgba(45, 158, 107, 0.35);
 }
-
 .btn-green:active { transform: scale(0.97); }
 
 .btn-orange {
@@ -205,36 +199,28 @@ body {
     color: var(--orange-dark);
     border: 1px solid var(--orange-mid);
 }
-
-.btn-orange:hover {
-    background: #fde8c8;
-    border-color: var(--orange);
-}
+.btn-orange:hover { background: #fde8c8; border-color: var(--orange); }
 
 .btn-ghost {
     background: transparent;
     color: var(--text-2);
     border: 1.5px solid var(--border);
 }
-
-.btn-ghost:hover {
-    background: var(--bg);
-    border-color: var(--border-2);
-    color: var(--text);
-}
+.btn-ghost:hover { background: var(--bg); border-color: var(--border-2); color: var(--text); }
 
 .btn-danger {
     background: var(--red-light);
     color: var(--red-dark);
     border: 1px solid var(--red-mid);
 }
-
 .btn-danger:hover { background: #fecaca; }
 
 .btn-sm { padding: 7px 14px; font-size: 13px; }
 .btn-sm svg { width: 13px; height: 13px; }
 
-/* Cards */
+/* ================================================
+   CARDS — source unique
+================================================ */
 .card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -242,9 +228,7 @@ body {
     padding: var(--space-lg);
     transition: box-shadow var(--duration-normal);
 }
-
 .card:hover { box-shadow: var(--shadow-md); }
-
 .card-title {
     font-family: var(--font-display);
     font-size: 15px;
@@ -262,7 +246,6 @@ body {
     border-radius: var(--radius-full);
     overflow: hidden;
 }
-
 .progress-fill {
     height: 100%;
     background: var(--green);
@@ -270,7 +253,6 @@ body {
     transition: width 0.8s cubic-bezier(0.65, 0, 0.35, 1);
     box-shadow: 0 0 8px rgba(45, 158, 107, 0.3);
 }
-
 .progress-fill.orange { background: var(--orange); }
 .progress-fill.red    { background: var(--red); }
 
@@ -285,13 +267,11 @@ body {
     padding: 0 14px;
     transition: all var(--duration-fast);
 }
-
 .input-box:focus-within {
     border-color: var(--green);
     box-shadow: 0 0 0 3px var(--green-light);
     background: var(--surface);
 }
-
 .input-box input,
 .input-box select {
     flex: 1;
@@ -303,7 +283,6 @@ body {
     color: var(--text);
     outline: none;
 }
-
 .input-box input::placeholder { color: var(--text-3); }
 
 /* Animations communes */
@@ -311,17 +290,14 @@ body {
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes fadeIn {
     from { opacity: 0; }
     to   { opacity: 1; }
 }
-
 @keyframes slideIn {
     from { opacity: 0; transform: translateY(-10px) scale(0.97); }
     to   { opacity: 1; transform: translateY(0) scale(1); }
 }
-
 @keyframes scaleIn {
     from { opacity: 0; transform: scale(0.92); }
     to   { opacity: 1; transform: scale(1); }
@@ -333,13 +309,7 @@ body {
     padding: var(--space-xl) var(--space-md);
     color: var(--text-3);
 }
-
-.empty-state-icon {
-    width: 48px; height: 48px;
-    margin: 0 auto var(--space-md);
-    color: var(--border-2);
-}
-
+.empty-state-icon { width: 48px; height: 48px; margin: 0 auto var(--space-md); color: var(--border-2); }
 .empty-state-title {
     font-family: var(--font-display);
     font-size: 16px;
@@ -347,14 +317,17 @@ body {
     color: var(--text-2);
     margin-bottom: var(--space-xs);
 }
-
 .empty-state-desc { font-size: 13px; color: var(--text-3); line-height: 1.5; }
 
-/* Toast container */
+/* ================================================
+   TOAST — position définie une seule fois ici
+   dashboard.css ne redéfinit PAS #toast-container
+================================================ */
 #toast-container {
     position: fixed;
-    top: var(--space-lg);
-    right: var(--space-lg);
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: var(--z-toast);
     display: flex;
     flex-direction: column;
@@ -363,73 +336,57 @@ body {
 }
 
 /* ================================================
-   THÈME SOMBRE (DARK MODE)
+   THÈME SOMBRE
 ================================================ */
 [data-theme="dark"] {
-    --bg:             #0f172a;
-    --bg-gradient:    linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    --surface:        #1e293b;
-    --surface-hover:  #334155;
-    --text:           #f1f5f9;
-    --text-muted:     #cbd5e1;
-    --text-dim:       #94a3b8;
-    --text-2:         #94a3b8;
-    --text-3:         #64748b;
-    --border:         rgba(255, 255, 255, 0.08);
-    --border-bright:  rgba(255, 255, 255, 0.15);
-    --border-2:       #334155;
-    
-    /* Couleurs principales */
-    --primary:        #3b82f6;
-    --primary-dark:   #2563eb;
-    --primary-soft:   #1e3a5f;
-    
-    --green:          #10b981;
-    --green-dark:     #059669;
-    --green-light:    #064e3b;
-    --green-mid:      #34d399;
-    
-    --orange:         #f97316;
-    --orange-dark:    #ea580c;
-    --orange-light:   #431407;
-    --orange-mid:     #fdba74;
-    
-    --red:            #ef4444;
-    --red-dark:       #dc2626;
-    --red-light:      #7f1d1d;
-    --red-mid:        #f87171;
-    
-    /* Ombres */
-    --shadow-sm:      0 1px 3px rgba(0, 0, 0, 0.3);
-    --shadow-md:      0 4px 16px rgba(0, 0, 0, 0.4);
-    --shadow-lg:      0 10px 40px rgba(0, 0, 0, 0.5);
-    --shadow-green:   0 4px 16px rgba(16, 185, 129, 0.2);
-    --shadow-orange:  0 4px 16px rgba(249, 115, 22, 0.2);
-    
-    /* Wizard spécifique */
-    --wiz-bg:          #0f172a;
-    --wiz-bg-alt:      #1e293b;
-    --wiz-surface:     #1e293b;
-    --wiz-surface-alt: #334155;
+    --bg:            #0f172a;
+    --bg-gradient:   linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    --surface:       #1e293b;
+    --surface-hover: #334155;
+    --text:          #f1f5f9;
+    --text-muted:    #cbd5e1;
+    --text-dim:      #94a3b8;
+    --text-2:        #94a3b8;
+    --text-3:        #64748b;
+    --border:        rgba(255, 255, 255, 0.08);
+    --border-bright: rgba(255, 255, 255, 0.15);
+    --border-2:      #334155;
+
+    --primary:      #3b82f6;
+    --primary-dark: #2563eb;
+    --primary-soft: #1e3a5f;
+
+    --green:       #10b981;
+    --green-dark:  #059669;
+    --green-light: #064e3b;
+    --green-mid:   #34d399;
+
+    --orange:       #f97316;
+    --orange-dark:  #ea580c;
+    --orange-light: #431407;
+    --orange-mid:   #fdba74;
+
+    --red:       #ef4444;
+    --red-dark:  #dc2626;
+    --red-light: #7f1d1d;
+    --red-mid:   #f87171;
+
+    --shadow-sm:     0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-md:     0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-lg:     0 10px 40px rgba(0, 0, 0, 0.5);
+    --shadow-green:  0 4px 16px rgba(16, 185, 129, 0.2);
+    --shadow-orange: 0 4px 16px rgba(249, 115, 22, 0.2);
+
+    --wiz-bg:           #0f172a;
+    --wiz-bg-alt:       #1e293b;
+    --wiz-surface:      #1e293b;
+    --wiz-surface-alt:  #334155;
     --wiz-surface-item: #0f172a;
-    --wiz-border:      #334155;
-    --wiz-border-strong: #475569;
+    --wiz-border:       #334155;
+    --wiz-border-strong:#475569;
 }
 
-/* Ajustements supplémentaires pour le mode sombre */
-[data-theme="dark"] .card:hover {
-    background: #334155;
-}
-
-[data-theme="dark"] .badge-muted {
-    background: #334155;
-    color: #cbd5e1;
-}
-
-[data-theme="dark"] .module-row {
-    background: #0f172a;
-}
-
-[data-theme="dark"] .module-row:focus-within {
-    background: #1e293b;
-}
+[data-theme="dark"] .card:hover    { background: #334155; }
+[data-theme="dark"] .badge-muted   { background: #334155; color: #cbd5e1; }
+[data-theme="dark"] .module-row    { background: #0f172a; }
+[data-theme="dark"] .module-row:focus-within { background: #1e293b; }

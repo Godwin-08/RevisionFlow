@@ -174,7 +174,6 @@ RevisionFlow/
 │   ├── planning.js       # Algorithme de priorité et distribution
 │   ├── storage.js        # Persistance localStorage + import/export
 │   ├── ui.js             # Toasts, animations, modales
-│   └── router.js         # Navigation sans rechargement
 │
 └── components/
     ├── wizard/           # Assistant de création (3 étapes)

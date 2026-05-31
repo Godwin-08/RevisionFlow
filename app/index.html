@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RevisionFlow</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <meta http-equiv="refresh" content="0; url=../components/wizard/wizard.html">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800;12..96,900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../core/variables.css">
     <style>
         body {
@@ -17,7 +16,6 @@
             flex-direction: column;
             gap: 1rem;
         }
-
         .loader {
             width: 40px; height: 40px;
             border-radius: 50%;
@@ -25,11 +23,7 @@
             border-top-color: var(--green);
             animation: spin 0.8s linear infinite;
         }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
+        @keyframes spin { to { transform: rotate(360deg); } }
         .loader-txt {
             font-family: var(--font-display);
             font-size: 14px;
@@ -42,7 +36,7 @@
 <body>
     <div class="loader"></div>
     <div class="loader-txt">Chargement...</div>
-
+    <!-- supprimé : <meta http-equiv="refresh"> redondant -->
     <script>window.location.replace('../components/wizard/wizard.html');</script>
 </body>
 </html>

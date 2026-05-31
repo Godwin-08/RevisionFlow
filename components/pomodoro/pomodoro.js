@@ -252,7 +252,7 @@ const Pomodoro = (() => {
                 _intervalle = null;
                 _enCours    = false;
                 document.title = 'RevisionFlow — Dashboard';
-            } else {
+            } else { // Démarrer
                 // Démarrer
                 _enCours = true;
 

@@ -4,19 +4,22 @@ const Dashboard = (() => {
     let _countdownId = null;
     let _noteModuleId  = null;
     let _editModuleId  = null;
-    let _noteTimeout   = null;
+
+    // Référence stable à l'élément countdown — récupérée une seule fois
+    let _countdownEl = null;
 
     function init() {
         const state = State.get();
 
-        Filters.restaurer();
+        // Cache des éléments countdown (pas de getElementById à chaque tick)
+        _countdownEl = document.getElementById('countdown-val');
 
+        Filters.restaurer();
         Dashboard.afficherTab('aujourdhui');
         DashboardView.rendreStats(state);
         DashboardView.rendreSidebar();
         _demarrerCountdown();
         Pomodoro.init();
-
         _syncPomoInterval();
 
         State.subscribe((newState) => {
@@ -26,6 +29,40 @@ const Dashboard = (() => {
             DashboardView.mettreAJourAlerteSurcharge(newState);
         });
 
+        _attacherEvenements();
+    }
+
+    function _attacherEvenements() {
+        // Nav sidebar
+        document.getElementById('nav-aujourdhui')?.addEventListener('click', () => Dashboard.afficherTab('aujourdhui'));
+        document.getElementById('nav-modules')?.addEventListener('click',    () => Dashboard.afficherTab('modules'));
+        document.getElementById('nav-calendrier')?.addEventListener('click', () => Dashboard.afficherTab('calendrier'));
+        document.getElementById('nav-historique')?.addEventListener('click', () => { window.location.href = '../../history/index.html'; });
+        document.getElementById('nav-settings')?.addEventListener('click',   () => Dashboard.afficherTab('settings'));
+
+        // Pomodoro
+        document.getElementById('btn-pomo-toggle')?.addEventListener('click', () => { Pomodoro.toggle(); DashboardView.syncPomo(); });
+        document.getElementById('btn-pomo-reset')?.addEventListener('click',  () => { Pomodoro.reset();  DashboardView.syncPomo(); });
+
+        // Mobile sidebar
+        document.getElementById('btn-toggle-sidebar')?.addEventListener('click', () => Dashboard.toggleSidebar());
+
+        // Calendrier nav
+        document.getElementById('btn-cal-prev')?.addEventListener('click', () => Dashboard.calPrev());
+        document.getElementById('btn-cal-next')?.addEventListener('click', () => Dashboard.calNext());
+
+        // Fermer détail calendrier
+        document.getElementById('btn-close-detail')?.addEventListener('click', () => {
+            document.getElementById('cal-day-detail')?.classList.add('hidden');
+        });
+
+        // Anticiper
+        document.getElementById('btn-anticiper')?.addEventListener('click', () => Dashboard.anticiper());
+
+        // Jour libre FAB
+        document.getElementById('btn-jour-libre')?.addEventListener('click', () => Dashboard.declarerJourLibre());
+
+        // Ajout module
         document.getElementById('btn-add-mod-dash')?.addEventListener('click', () => {
             const nom  = document.getElementById('dash-mod-nom').value;
             const date = document.getElementById('dash-mod-date').value;
@@ -40,6 +77,30 @@ const Dashboard = (() => {
             UI.toast('Module ajouté !', 'success');
         });
 
+        // Settings
+        document.getElementById('btn-save-settings')?.addEventListener('click', () => Dashboard.sauvegarderSettings());
+        document.getElementById('btn-toggle-theme')?.addEventListener('click',  () => Dashboard.toggleTheme());
+        document.getElementById('btn-export')?.addEventListener('click', () => Storage.exporterJSON());
+        document.getElementById('btn-import-trigger')?.addEventListener('click', () => {
+            document.getElementById('import-input')?.click();
+        });
+        document.getElementById('btn-reinit')?.addEventListener('click', () => Dashboard.reinitialiser());
+
+        // Sliders settings (oninput live)
+        document.getElementById('set-h-soir')?.addEventListener('input', e => {
+            document.getElementById('lbl-soir').textContent = e.target.value + 'h';
+        });
+        document.getElementById('set-h-weekend')?.addEventListener('input', e => {
+            document.getElementById('lbl-weekend').textContent = e.target.value + 'h';
+        });
+        document.getElementById('set-h-session')?.addEventListener('input', e => {
+            document.getElementById('lbl-session').textContent = e.target.value + 'h';
+        });
+
+        // Select pays
+        document.getElementById('sb-pays-select')?.addEventListener('change', e => Dashboard.changerPays(e.target.value));
+
+        // Import JSON
         document.getElementById('import-input')?.addEventListener('change', e => {
             const file = e.target.files[0];
             if (file) {
@@ -54,13 +115,19 @@ const Dashboard = (() => {
             e.target.value = '';
         });
 
-        // Fermer le menu contextuel au clic dehors
+        // Modals
+        document.getElementById('btn-modal-note-annuler')?.addEventListener('click', () => Dashboard.fermerModalNote());
+        document.getElementById('btn-modal-note-sauv')?.addEventListener('click',    () => Dashboard.sauvegarderModalNote());
+        document.getElementById('btn-modal-edit-annuler')?.addEventListener('click', () => Dashboard.fermerModalEdit());
+        document.getElementById('btn-modal-edit-sauv')?.addEventListener('click',    () => Dashboard.sauvegarderEditDate());
+
+        // Fermer sidebar au clic dehors (mobile)
         document.addEventListener('click', e => {
             const menu = document.getElementById('session-ctx-menu');
             if (menu && !menu.contains(e.target)) menu.classList.add('hidden');
 
             const sidebar = document.getElementById('sidebar');
-            const btn = document.querySelector('.mobile-menu-btn');
+            const btn = document.getElementById('btn-toggle-sidebar');
             if (sidebar?.classList.contains('open') && !sidebar.contains(e.target) && !btn?.contains(e.target)) {
                 sidebar.classList.remove('open');
             }
@@ -73,28 +140,29 @@ const Dashboard = (() => {
 
     function _demarrerCountdown() {
         if (_countdownId) clearInterval(_countdownId);
+        const mobileEl = document.getElementById('mobile-countdown');
+
         const update = () => {
-            const state   = State.get();
+            const state    = State.get();
             const prochain = Planning.prochainExamen(state.modules);
             if (!prochain) return;
-            const { texte, urgence } = Planning.formaterCountdown(prochain.dateExam);
-            
-            // Mise à jour Desktop
-            const valEl = document.getElementById('countdown-val');
-            if (valEl) valEl.textContent = texte;
 
-            // Mise à jour Mobile
-            const mobileEl = document.getElementById('mobile-countdown');
+            const { texte, urgence } = Planning.formaterCountdown(prochain.dateExam);
+
+            // Mise à jour desktop — référence cachée
+            if (_countdownEl) _countdownEl.textContent = texte;
+
+            // Mise à jour mobile
             if (mobileEl) mobileEl.textContent = texte;
 
-            // Mise à jour des alertes visuelles (couleurs)
-            const box = document.getElementById('countdown-val');
-            if (box) {
-                box.classList.remove('alerte', 'critique');
-                if (urgence === 'alerte') box.classList.add('alerte');
-                if (urgence === 'critique') box.classList.add('critique');
+            // Classes d'urgence — un seul getElementById
+            if (_countdownEl) {
+                _countdownEl.classList.remove('urgence', 'critique');
+                if (urgence === 'urgence') _countdownEl.classList.add('urgence');
+                if (urgence === 'critique') _countdownEl.classList.add('critique');
             }
         };
+
         update();
         _countdownId = setInterval(update, 1000);
     }
@@ -234,7 +302,7 @@ const Dashboard = (() => {
         toggleTheme() { State.toggleTheme(); },
 
         calPrev() { DashboardView.calNav(-1); },
-        calNext() { DashboardView.calNav(1); },
+        calNext() { DashboardView.calNav(1);  },
 
         toggleSidebar() {
             document.getElementById('sidebar')?.classList.toggle('open');

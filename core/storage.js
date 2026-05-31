@@ -35,18 +35,6 @@ const Storage = (() => {
             localStorage.removeItem(CLE_PRINCIPALE);
         },
 
-        // Sauvegarde automatique — appelée à chaque action
-        // Abonne storage aux changements de State
-        initialiser() {
-            // Restaurer l'état au démarrage
-            const saved = this.charger();
-            if (saved) {
-                State.replace(saved);
-                return true;  // données existantes
-            }
-            return false;     // première visite
-        },
-
         // Exporte le planning actif en fichier JSON
         exporterJSON() {
             const state = State.get();

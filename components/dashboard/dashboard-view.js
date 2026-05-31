@@ -21,14 +21,6 @@ const DashboardView = (() => {
                 if (nomEl) nomEl.textContent = UI.formaterDate(prochain.dateExam, { day: 'numeric', month: 'short' });
                 if (modEl) modEl.textContent = prochain.nom;
             }
-
-            const streakEl = document.getElementById('sb-streak');
-            if (streakEl) {
-                const { streak, velocite } = state.stats;
-                streakEl.textContent = streak > 0
-                    ? `${streak} jour${streak > 1 ? 's' : ''} de suite · ${velocite} sess/j`
-                    : `${velocite} sessions/jour en moyenne`;
-            }
         },
 
         rendreStats(state) {
@@ -123,6 +115,7 @@ const DashboardView = (() => {
                 if (pctEl) pctEl.textContent = Math.round(pct * 100) + '%';
             }
 
+            this.syncPomo(); // Synchroniser le Pomodoro dans la carte du jour
             const sessionsList = document.getElementById('sessions-list');
             if (!jourPlan || !total) {
                 if (sessionsList) sessionsList.innerHTML = `
@@ -212,6 +205,9 @@ const DashboardView = (() => {
             const menu = document.getElementById('session-ctx-menu');
             if (!menu) return;
 
+            // Stocker l'élément qui a déclenché le menu pour restaurer le focus
+            this._lastFocusedElement = document.activeElement;
+
             const menuWidth = 180;
             const viewportWidth = window.innerWidth;
             let left = event.clientX - 160;
@@ -219,19 +215,56 @@ const DashboardView = (() => {
             // Empêcher le débordement à droite
             if (left + menuWidth > viewportWidth) left = viewportWidth - menuWidth - 10;
             if (left < 10) left = 10;
-
-            menu.classList.remove('hidden');
+            
+            // Positionner le menu et le rendre visible
             menu.style.top  = (event.clientY + 4) + 'px';
             menu.style.left = left + 'px';
+            menu.classList.remove('hidden');
+
+            // Mettre le focus sur le premier élément du menu
+            const firstMenuItem = menu.querySelector('button');
+            if (firstMenuItem) firstMenuItem.focus();
+
+            // Gérer le focus trap pour le menu contextuel
+            const focusableElements = Array.from(menu.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'));
+            const firstFocusable = focusableElements[0];
+            const lastFocusable = focusableElements[focusableElements.length - 1];
+
+            const handleTabKey = (e) => {
+                if (e.key === 'Tab') {
+                    if (e.shiftKey) { // Shift + Tab
+                        if (document.activeElement === firstFocusable) {
+                            lastFocusable.focus();
+                            e.preventDefault();
+                        }
+                    } else { // Tab
+                        if (document.activeElement === lastFocusable) {
+                            firstFocusable.focus();
+                            e.preventDefault();
+                        }
+                    }
+                }
+                if (e.key === 'Escape') {
+                    menu.classList.add('hidden');
+                    if (this._lastFocusedElement) this._lastFocusedElement.focus();
+                }
+            };
+            menu.addEventListener('keydown', handleTabKey);
+            // Nettoyer l'écouteur quand le menu est caché
+            menu.dataset.keydownListener = handleTabKey; // Stocker la référence pour la suppression
 
             document.getElementById('ctx-reporter').onclick = () => {
                 Dashboard.reporterSession(this._ctxDate, this._ctxModuleId);
                 menu.classList.add('hidden');
+                if (this._lastFocusedElement) this._lastFocusedElement.focus();
+                menu.removeEventListener('keydown', menu.dataset.keydownListener);
             };
             document.getElementById('ctx-note').onclick = () => {
                 const mod = State.get().modules.find(m => m.id === this._ctxModuleId);
                 if (mod) Dashboard.ouvrirModalNote(this._ctxModuleId, mod.nom);
                 menu.classList.add('hidden');
+                if (this._lastFocusedElement) this._lastFocusedElement.focus();
+                menu.removeEventListener('keydown', menu.dataset.keydownListener);
             };
         },
 
@@ -500,6 +533,7 @@ const DashboardView = (() => {
             if (dataInfo) dataInfo.textContent = `Données locales · ${Storage.tailleKo()} Ko`;
         },
 
+        // Déplacé ici pour être appelé par rendreAujourdHui
         mettreAJourAlerteSurcharge(state) {
             const alert = document.getElementById('backlog-alert');
             if (!alert) return;
@@ -512,8 +546,8 @@ const DashboardView = (() => {
             }
         },
 
-        syncPomo() {
-            const timeEl = document.getElementById('sb-pomo-time');
+        syncPomo() { // Renommée pour être plus générique, appelée par Dashboard.js et rendreAujourdHui
+            const timeEl = document.getElementById('pomo-time');
             const modeEl = document.getElementById('sb-pomo-mode');
             const iconEl = document.getElementById('sb-pomo-icon');
             if (!timeEl) return;
