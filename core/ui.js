@@ -60,8 +60,16 @@ const UI = (() => {
         remplirSelectPays(selectId, codeSelectionne) {
             const el = document.getElementById(selectId);
             if (!el) return;
+            const isWindows = typeof navigator !== 'undefined' && 
+                ((navigator.platform && navigator.platform.indexOf('Win') !== -1) || 
+                 (navigator.userAgent && navigator.userAgent.indexOf('Windows') !== -1));
             el.innerHTML = Object.entries(this.PAYS)
-                .map(([code, nom]) => `<option value="${code}" ${code === codeSelectionne ? 'selected' : ''}>${nom}</option>`)
+                .map(([code, nom]) => {
+                    const nomNettoye = isWindows 
+                        ? nom.replace(/[\uD83C][\uDDE6-\uDDFF]/g, '').trim() 
+                        : nom;
+                    return `<option value="${code}" ${code === codeSelectionne ? 'selected' : ''}>${nomNettoye}</option>`;
+                })
                 .join('');
         },
 
