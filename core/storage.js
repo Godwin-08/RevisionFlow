@@ -5,7 +5,6 @@
 const Storage = (() => {
 
     const CLE_PRINCIPALE = 'revisionflow_data';
-    const CLE_HISTORIQUE  = 'revisionflow_historique_v1';
 
     return {
 

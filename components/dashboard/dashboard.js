@@ -198,10 +198,10 @@ const Dashboard = (() => {
             }
         },
 
-        reporterSession(date, moduleId) {
+        reporterSession(date, moduleId, sessionId) {
             const state = State.get();
             const mod   = state.modules.find(m => m.id === moduleId);
-            const res   = State.reporterSession(moduleId, date);
+            const res   = State.reporterSession(moduleId, date, sessionId);
             if (res.success) {
                 const nomSafe = UI.echapperHTML(mod?.nom);
                 UI.toast(

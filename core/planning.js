@@ -47,7 +47,7 @@ const Planning = (() => {
         },
 
         // Génère la liste des jours disponibles entre deux dates
-        genererJours(dateDebut, modules, config, joursFeeries = []) {
+        genererJours(dateDebut, modules, config, joursFeries = []) {
             const jours     = [];
             const today     = this.toStr(new Date());
             const dateMax   = [...modules].map(m => m.dateExam).sort().pop();
@@ -59,7 +59,7 @@ const Planning = (() => {
             while (current <= last) {
                 const str     = this.toStr(current);
                 const estWE   = this.estSamediDimanche(str);
-                const estFerie = joursFeeries.includes(str);
+                const estFerie = joursFeries.includes(str);
                 const estBloque = config.joursBlockes.includes(str);
                 const estLibre  = config.joursLibres.includes(str);
 
@@ -97,7 +97,7 @@ const Planning = (() => {
         },
 
         // Nouvel Algorithme Glouton avec Entrelacement
-        generer({ dateDebut, modules, config, joursFeeries = [], planActuel = [] }) {
+        generer({ dateDebut, modules, config, joursFeries = [], planActuel = [] }) {
             if (!modules.length || !dateDebut) return { plan: [], backlog: [] };
             const today = this.toStr(new Date());
             
@@ -128,7 +128,7 @@ const Planning = (() => {
                 debutFutur = dateDebut > today ? dateDebut : today;
             }
 
-            const joursFuturs = this.genererJours(debutFutur, modules, config, joursFeeries);
+            const joursFuturs = this.genererJours(debutFutur, modules, config, joursFeries);
 
             joursFuturs.forEach(jour => {
                 if (jour.type === 'off') return;
@@ -312,7 +312,7 @@ const Planning = (() => {
             const velocite = +(sessRec / 3).toFixed(1);
 
             return {
-                totalSessions: totalVolume,
+                totalSessions: totalSessions,
                 sessionsFaites: faits,
                 pourcentage,
                 joursRestants,

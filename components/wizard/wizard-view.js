@@ -106,7 +106,7 @@ const WizardView = (() => {
             </div>`;
         },
 
-        rendreCalendrier(modules, joursFeeries, joursBlockes) {
+        rendreCalendrier(modules, joursFeries, joursBlockes) {
             const container = document.getElementById('wiz-calendar-container');
             if (!container) {
                 console.error('❌ Conteneur #wiz-calendar-container introuvable');
@@ -132,7 +132,7 @@ const WizardView = (() => {
                     const str = `${this.calState.annee}-${String(this.calState.mois + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
                     const isPast = str < debut;
                     const isWE = (new Date(str + 'T12:00:00').getDay() % 6 === 0);
-                    const isFerie = joursFeeries.includes(str);
+                    const isFerie = joursFeries.includes(str);
                     const isBlk = joursBlockes.includes(str);
                     let cls = 'wiz-cal-day';
                     if (isPast) cls += ' past';

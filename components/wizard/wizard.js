@@ -9,7 +9,7 @@ const Wizard = (() => {
     let _typeProfil    = null;
     let _heures        = { soir: 2, weekend: 6, session: 1 };
     let _modules       = [];
-    let _joursFeeries  = [];
+    let _joursFeries  = [];
     let _joursBlockes  = [];
     let _calMois       = WizardView.calState.mois;
     let _calAnnee      = WizardView.calState.annee;
@@ -47,13 +47,13 @@ const Wizard = (() => {
         return true;
     }
 
-    async function chargerJoursFeeries() {
+    async function chargerJoursFeries() {
         try {
             await State.chargerJoursFeries();
-            _joursFeeries = State.getKey('joursFeries');
+            _joursFeries = State.getKey('joursFeries');
         } catch (e) {
             console.warn("Erreur chargement jours fériés", e);
-            _joursFeeries = [];
+            _joursFeries = [];
         }
     }
 
@@ -74,7 +74,7 @@ const Wizard = (() => {
                     joursLibres: []
                 },
                 modules: _modules,
-                joursFeries: _joursFeeries
+                joursFeries: _joursFeries
             });
             State.planifier();
             const state = State.get();
@@ -112,7 +112,7 @@ const Wizard = (() => {
 
         if (n === 3) {
             // Chargement des jours fériés (non bloquant)
-            chargerJoursFeeries().catch(e => console.warn(e));
+            chargerJoursFeries().catch(e => console.warn(e));
             // Premier rendu immédiat
             renderCalendrier();
             // Second rendu après un délai pour intégrer les jours fériés
@@ -145,7 +145,7 @@ const Wizard = (() => {
     }
 
     function renderCalendrier() {
-        WizardView.rendreCalendrier(_modules, _joursFeeries, _joursBlockes);
+        WizardView.rendreCalendrier(_modules, _joursFeries, _joursBlockes);
     }
 
     return {
@@ -181,7 +181,7 @@ const Wizard = (() => {
 
         async changerPays(code) {
             State.update({ pays: code });
-            await chargerJoursFeeries();
+            await chargerJoursFeries();
             if (_etapeCourante === 3) renderCalendrier();
         },
 

@@ -32,8 +32,10 @@ const History = (() => {
                 year: 'numeric' 
             });
 
-            const nomsMods = h.modules?.map(m => UI.echapperHTML(m.nom)).slice(0, 3).join(', ')
-                + (h.modules?.length > 3 ? ` +${h.modules.length - 3}` : '');
+            const nomsMods = h.modules
+                ? h.modules.map(m => UI.echapperHTML(m.nom)).slice(0, 3).join(', ')
+                    + (h.modules.length > 3 ? ` +${h.modules.length - 3}` : '')
+                : '';
 
             const stats = h.stats || {};
 

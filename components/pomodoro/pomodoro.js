@@ -22,6 +22,25 @@ const Pomodoro = (() => {
     let _sessionsAuj  = 0;
     let _sessionsPomo = 0;  // compteur de sessions depuis le démarrage (pour les pauses longues)
 
+    // ---- Persistance de l'état ----
+    function _sauvegarderEtat() {
+        try {
+            const data = {
+                mode: _modeCourant,
+                dureeBase: _dureeBase,
+                tempsRestant: _tempsRestant,
+                enCours: _enCours,
+                sessionsAuj: _sessionsAuj,
+                sessionsPomo: _sessionsPomo,
+                lastUpdated: Date.now(),
+                lastDate: new Date().toDateString()
+            };
+            localStorage.setItem('revisionflow_pomodoro', JSON.stringify(data));
+        } catch (e) {
+            console.error('Pomodoro - erreur sauvegarde :', e);
+        }
+    }
+
     // ---- Sons via Web Audio API ----
     function _jouerSon(type = 'fin') {
         try {
@@ -117,6 +136,7 @@ const Pomodoro = (() => {
 
         _mettreAJourBouton();
         _rendreChrono();
+        _sauvegarderEtat();
     }
 
     // ---- Fin d'une session ----
@@ -227,8 +247,84 @@ const Pomodoro = (() => {
 
         // Initialiser — appeler une fois au chargement du dashboard
         init() {
+            try {
+                const raw = localStorage.getItem('revisionflow_pomodoro');
+                if (raw) {
+                    const data = JSON.parse(raw);
+                    _modeCourant = data.mode ?? 'travail';
+                    _dureeBase = data.dureeBase ?? (25 * 60);
+                    _tempsRestant = data.tempsRestant ?? (25 * 60);
+                    _enCours = data.enCours ?? false;
+                    _sessionsPomo = data.sessionsPomo ?? 0;
+
+                    // Réinitialiser les sessions du jour si la date a changé
+                    const todayStr = new Date().toDateString();
+                    if (data.lastDate && data.lastDate !== todayStr) {
+                        _sessionsAuj = 0;
+                    } else {
+                        _sessionsAuj = data.sessionsAuj ?? 0;
+                    }
+
+                    // Si c'était en cours, calculer le temps écoulé
+                    if (_enCours && data.lastUpdated) {
+                        const elapsed = Math.floor((Date.now() - data.lastUpdated) / 1000);
+                        if (elapsed >= _tempsRestant) {
+                            const depassement = elapsed - _tempsRestant;
+                            _tempsRestant = 0;
+                            _enCours = false;
+                            
+                            // Si fini il y a moins de 5 minutes, déclencher la fin de session
+                            if (depassement < 300) {
+                                _finSession();
+                            } else {
+                                // Sinon on réinitialise à travail
+                                _modeCourant = 'travail';
+                                _tempsRestant = _dureeBase;
+                            }
+                        } else {
+                            _tempsRestant -= elapsed;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('Pomodoro - erreur chargement :', e);
+            }
+
+            // Reprendre l'intervalle si le timer doit tourner
+            if (_enCours) {
+                if (_intervalle) clearInterval(_intervalle);
+                _intervalle = setInterval(() => {
+                    _tempsRestant--;
+
+                    if (_tempsRestant % 60 === 0 && _tempsRestant > 0) {
+                        _jouerSon('tick');
+                    }
+
+                    _rendreChrono();
+                    _verifierUrgence();
+
+                    if (_tempsRestant <= 0) {
+                        _finSession();
+                    }
+                }, 1000);
+            }
+
             _rendreChrono();
             _mettreAJourBouton();
+
+            // Mettre à jour l'affichage du compteur de sessions dans le DOM
+            const el = document.getElementById('pomo-sess-count');
+            if (el) {
+                el.textContent = _sessionsAuj;
+            }
+
+            // Activer la bonne durée de base de travail dans l'UI
+            const minutes = Math.round(_dureeBase / 60);
+            document.querySelectorAll('.pomo-mode-btn').forEach(btn => {
+                btn.classList.toggle('active',
+                    btn.id === `pmode-${minutes}`
+                );
+            });
 
             // Injecter le style pulseCritique si pas encore présent
             if (!document.getElementById('pomo-styles')) {
@@ -275,6 +371,7 @@ const Pomodoro = (() => {
 
             _mettreAJourBouton();
             _rendreChrono();
+            _sauvegarderEtat();
         },
 
         // Réinitialiser
@@ -297,6 +394,7 @@ const Pomodoro = (() => {
             }
 
             document.title = 'RevisionFlow — Dashboard';
+            _sauvegarderEtat();
         },
 
         // Changer la durée de base (25 ou 50 minutes)
@@ -325,6 +423,8 @@ const Pomodoro = (() => {
                 `Durée réglée sur ${minutes} minutes.`,
                 'info'
             );
+            _sauvegarderEtat();
+        },
         },
 
         // Passer manuellement en mode pause

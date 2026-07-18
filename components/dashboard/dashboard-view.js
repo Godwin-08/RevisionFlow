@@ -4,6 +4,7 @@ const DashboardView = (() => {
         calState: { mois: new Date().getMonth(), annee: new Date().getFullYear() },
         _ctxDate: null,
         _ctxModuleId: null,
+        _ctxSessionId: null,
 
         rendreSidebar() {
             const state = State.get();
@@ -178,7 +179,7 @@ const DashboardView = (() => {
                 </div>
                 <div class="session-card-side">
                     <button class="session-menu-btn"
-                            onclick="DashboardView.ouvrirCtxMenu(event,'${date}','${mod.id}')"
+                            onclick="DashboardView.ouvrirCtxMenu(event,'${date}','${mod.id}','${session.id}')"
                             title="Options">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                              stroke-linecap="round" width="14" height="14">
@@ -197,10 +198,11 @@ const DashboardView = (() => {
             </div>`;
         },
 
-        ouvrirCtxMenu(event, date, moduleId) {
+        ouvrirCtxMenu(event, date, moduleId, sessionId) {
             event.stopPropagation();
             this._ctxDate     = date;
             this._ctxModuleId = moduleId;
+            this._ctxSessionId = sessionId;
 
             const menu = document.getElementById('session-ctx-menu');
             if (!menu) return;
@@ -254,7 +256,7 @@ const DashboardView = (() => {
             menu.dataset.keydownListener = handleTabKey; // Stocker la référence pour la suppression
 
             document.getElementById('ctx-reporter').onclick = () => {
-                Dashboard.reporterSession(this._ctxDate, this._ctxModuleId);
+                Dashboard.reporterSession(this._ctxDate, this._ctxModuleId, this._ctxSessionId);
                 menu.classList.add('hidden');
                 if (this._lastFocusedElement) this._lastFocusedElement.focus();
                 menu.removeEventListener('keydown', menu.dataset.keydownListener);

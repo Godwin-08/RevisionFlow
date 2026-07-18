@@ -77,7 +77,7 @@ const State = (() => {
                 dateDebut: _data.config.dateDebut || Planning.toStr(new Date()),
                 modules: _data.modules,
                 config: _data.config,
-                joursFeeries: _data.joursFeries,
+                joursFeries: _data.joursFeries,
                 planActuel: _data.plan
             });
             _data.plan = result.plan;
@@ -185,10 +185,12 @@ const State = (() => {
             return true;
         },
 
-        reporterSession(idModule, date) {
+        reporterSession(idModule, date, sessionId = null) {
             const jour = _data.plan.find(j => j.date === date);
             if (!jour) return { success: false };
-            const idx = jour.sessions.findIndex(s => s.moduleId === idModule && s.statut === 'en_attente');
+            const idx = sessionId
+                ? jour.sessions.findIndex(s => s.id === sessionId && s.statut === 'en_attente')
+                : jour.sessions.findIndex(s => s.moduleId === idModule && s.statut === 'en_attente');
             if (idx === -1) return { success: false };
             const backlogAvant = _data.backlog.find(b => b.moduleId === idModule)?.sessions || 0;
             jour.sessions.splice(idx, 1);
