@@ -161,6 +161,7 @@ const Planning = (() => {
                         id: `sess_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,
                         moduleId: cible.id,
                         nom: cible.nom,
+                        date: jour.date,
                         dureeH: 1,
                         faite: false,
                         statut: 'en_attente',
@@ -243,14 +244,43 @@ const Planning = (() => {
             return 'Chaque session compte. Lance-toi.';
         },
 
+        getModuleProgress(module, plan = []) {
+            const sessionsModule = [];
+            (plan || []).forEach(jour => {
+                (jour.sessions || []).forEach(session => {
+                    if (session.moduleId === module.id) sessionsModule.push(session);
+                });
+            });
+
+            if (sessionsModule.length) {
+                const faites = sessionsModule.filter(s => s.faite).length;
+                const total = sessionsModule.length;
+                return {
+                    total,
+                    faites,
+                    restantes: Math.max(0, total - faites),
+                    pct: total > 0 ? Math.round((faites / total) * 100) : 0
+                };
+            }
+
+            const fallbackTotal = Math.max(1, module.chapitres || 5);
+            const faites = Math.min(module.sessionsValidees || 0, fallbackTotal);
+            return {
+                total: fallbackTotal,
+                faites,
+                restantes: Math.max(0, fallbackTotal - faites),
+                pct: Math.round((faites / fallbackTotal) * 100)
+            };
+        },
+
         // Stats globales du planning
         calculerStats(plan, modules, backlog = []) {
             const today = this.toStr(new Date());
-            
-            const totalVolume = modules.reduce((acc, m) => acc + (m.chapitres || 5), 0);
-            const faits       = modules.reduce((acc, m) => acc + (m.sessionsValidees || 0), 0);
-            const pourcentage = totalVolume > 0
-                ? Math.min(100, Math.round((faits / totalVolume) * 100))
+            const moduleProgress = modules.map(module => this.getModuleProgress(module, plan));
+            const totalSessions = moduleProgress.reduce((acc, current) => acc + current.total, 0);
+            const faits = moduleProgress.reduce((acc, current) => acc + current.faites, 0);
+            const pourcentage = totalSessions > 0
+                ? Math.min(100, Math.round((faits / totalSessions) * 100))
                 : 0;
 
             // Prochain exam

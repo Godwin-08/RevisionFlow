@@ -4,6 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RevisionFlow — Dashboard</title>
+    <script>
+        (function () {
+            try {
+                const raw = localStorage.getItem('revisionflow_data');
+                if (raw) {
+                    const data = JSON.parse(raw);
+                    if (data?.prefs?.theme) {
+                        document.documentElement.setAttribute('data-theme', data.prefs.theme);
+                    }
+                }
+            } catch (e) {}
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800;12..96,900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../core/variables.css">
@@ -101,26 +114,25 @@
         <div class="dash-tab active" id="tab-aujourdhui">
 
             <div class="today-stats-bar">
-                <div class="today-stat">
+                <div class="today-stat today-stat-sessions">
                     <div class="today-stat-val" id="stat-sessions">0/0</div>
                     <div class="today-stat-lbl">Sessions du jour</div>
+                    <div class="today-prog-track" aria-hidden="true">
+                        <div class="today-prog-fill" id="today-prog-fill"></div>
+                    </div>
                 </div>
-                <div class="today-stat">
+                <div class="today-stat today-stat-global">
                     <div class="today-stat-val" id="stat-global">0%</div>
                     <div class="today-stat-lbl">Progression globale</div>
                 </div>
-                <div class="today-stat">
+                <div class="today-stat today-stat-streak">
                     <div class="today-stat-val" id="stat-streak">0j</div>
                     <div class="today-stat-lbl">Streak</div>
                 </div>
-                <div class="today-stat">
+                <div class="today-stat today-stat-exam">
                     <div class="today-stat-val" id="stat-jours">—</div>
                     <div class="today-stat-lbl">Prochain exam</div>
                 </div>
-            </div>
-
-            <div class="today-prog-track">
-                <div class="today-prog-fill" id="today-prog-fill"></div>
             </div>
 
             <div id="backlog-alert" class="backlog-alert hidden"></div>
@@ -147,7 +159,7 @@
                         <div class="prog-ring-area">
                             <div class="prog-ring-wrap">
                                 <svg width="110" height="110" viewBox="0 0 110 110">
-                                    <circle cx="55" cy="55" r="44" fill="none" stroke="#e2e8f0" stroke-width="8"/>
+                                    <circle class="ring-track" cx="55" cy="55" r="44" fill="none" stroke-width="8"/>
                                     <circle class="ring-fill" id="ring-fill" cx="55" cy="55" r="44"
                                         fill="none" stroke="#2D9E6B" stroke-width="8"
                                         stroke-linecap="round"

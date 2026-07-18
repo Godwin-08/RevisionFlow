@@ -162,10 +162,10 @@ const DashboardView = (() => {
             <div class="session-item-large ${session.faite ? 'is-done' : ''}" 
                  style="animation-delay:${idx * 60}ms"
                  role="article" 
-                 aria-label="Session de ${mod.nom}">
+                 aria-label="Session de ${UI.echapperHTML(mod.nom)}">
                 <div class="session-accent-bar" style="background:${mod.couleur}"></div>
                 <div class="session-card-main">
-                    <div class="session-mod-name ${session.faite ? 'done' : ''}">${mod.nom}</div>
+                    <div class="session-mod-name ${session.faite ? 'done' : ''}">${UI.echapperHTML(mod.nom)}</div>
                     <div class="session-prio-row">
                         <span class="session-prio-badge ${pMeta.cls}" aria-label="Priorité : ${pMeta.lbl}">
                             ${pMeta.lbl}
@@ -291,7 +291,7 @@ const DashboardView = (() => {
                 const chips = sessions.map(s => {
                     const mod = modMap[s.moduleId];
                     if (!mod) return '';
-                    return `<span class="future-session-chip" style="border-left-color:${mod.couleur}">${mod.nom}</span>`;
+                    return `<span class="future-session-chip" style="border-left-color:${mod.couleur}">${UI.echapperHTML(mod.nom)}</span>`;
                 }).join('');
                 return `<div class="future-day-item" 
                              role="button" 
@@ -350,7 +350,7 @@ const DashboardView = (() => {
                     aria-label="Détail du ${d} ${UI.NOMS_MOIS[this.calState.mois]}"
                     onclick="DashboardView.ouvrirDetailJour('${str}')"
                     onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); this.click(); }"
-                    ${exam ? `title="Examen : ${exam.nom}"` : ''}>
+                    ${exam ? `title="Examen : ${UI.echapperHTML(exam.nom)}"` : ''}>
                     <div class="cal-day-num">${d}</div>${dots}
                 </div>`;
             }
@@ -383,7 +383,7 @@ const DashboardView = (() => {
                     if (!mod) return '';
                     return `<div class="cal-detail-item">
                         <div class="cal-detail-dot" style="background:${mod.couleur}"></div>
-                        <span class="cal-detail-name">${mod.nom}</span>
+                        <span class="cal-detail-name">${UI.echapperHTML(mod.nom)}</span>
                         <span class="cal-detail-badge ${s.faite ? 'done' : ''}">${s.faite ? 'Fait' : 'À faire'}</span>
                     </div>`;
                 }).join('');
@@ -411,7 +411,7 @@ const DashboardView = (() => {
                 const cls = jours < 5 ? 'proche' : jours < 14 ? 'normal' : 'loin';
                 return `<div class="exam-list-item">
                     <div class="exam-dot" style="background:${m.couleur}"></div>
-                    <div class="exam-nom">${m.nom}</div>
+                    <div class="exam-nom">${UI.echapperHTML(m.nom)}</div>
                     <div style="font-size:12px;color:var(--text-3)">${UI.formaterDate(m.dateExam, { day: 'numeric', month: 'short' })}</div>
                     <span class="exam-jours ${cls}">J-${jours}</span>
                 </div>`;
@@ -449,13 +449,12 @@ const DashboardView = (() => {
 
             const statsModule = {};
             state.modules.forEach(m => {
-                const ms = modStatsMap[m.id];
-                const restantes = Math.max(0, (m.chapitres || 5) - (m.sessionsValidees || 0));
+                const progress = Planning.getModuleProgress(m, state.plan);
                 statsModule[m.id] = {
-                    total: ms.total, 
-                    faites: ms.faites, 
-                    restantes,
-                    pct: ms.total > 0 ? Math.round((ms.faites / ms.total) * 100) : 0,
+                    total: progress.total,
+                    faites: progress.faites,
+                    restantes: progress.restantes,
+                    pct: progress.pct,
                     score: Planning.calculerScore(m, null)
                 };
             });
@@ -476,11 +475,17 @@ const DashboardView = (() => {
                     ? Math.max(0, Math.ceil((new Date(mod.dateExam) - new Date()) / 86400000))
                     : null;
 
+                // Nom échappé une première fois pour la string JS de l'attribut onclick
+                // (backslash puis apostrophe), puis échappé pour le contexte HTML de
+                // l'attribut lui-même — sinon un nom contenant un guillemet double
+                // sortait de l'attribut onclick="..." et injectait du HTML/JS arbitraire.
+                const nomPourOnclick = UI.echapperHTML(mod.nom.replace(/\\/g, '\\\\').replace(/'/g, "\\'"));
+
                 return `
                 <div class="mod-item" style="animation-delay:${i * 50}ms;padding-left:12px;border-left:4px solid ${mod.couleur}">
                     <div class="mod-item-header">
                         <div class="mod-item-left">
-                            <div class="mod-nom">${mod.nom}</div>
+                            <div class="mod-nom">${UI.echapperHTML(mod.nom)}</div>
                         </div>
                         <div class="mod-right">
                             <span class="mod-score-badge ${pMeta.cls}">
@@ -494,7 +499,7 @@ const DashboardView = (() => {
                                 ${UI.icone('edit', 12)}
                             </button>
                             <button class="mod-edit-date" style="color:var(--text-3)"
-                                    onclick="Dashboard.supprimerModule('${mod.id}','${mod.nom.replace(/'/g,"\\'")}')">
+                                    onclick="Dashboard.supprimerModule('${mod.id}','${nomPourOnclick}')">
                                 ${UI.icone('trash', 12)}
                             </button>
                         </div>

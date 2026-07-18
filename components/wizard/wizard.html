@@ -4,6 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RevisionFlow — Nouveau planning</title>
+    <script>
+        (function () {
+            try {
+                const raw = localStorage.getItem('revisionflow_data');
+                if (raw) {
+                    const data = JSON.parse(raw);
+                    if (data?.prefs?.theme) {
+                        document.documentElement.setAttribute('data-theme', data.prefs.theme);
+                    }
+                }
+            } catch (e) {}
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="../../core/variables.css">
     <link rel="stylesheet" href="wizard.css">
@@ -244,11 +257,11 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-<script src="../../core/state.js"></script>
-<script src="../../core/ui.js"></script>
-<script src="../../core/planning.js"></script>
-<script src="../../core/storage.js"></script>
-<script src="wizard-view.js"></script>
-<script src="wizard.js"></script>
+<script src="../../core/state.js?v=20260701"></script>
+<script src="../../core/ui.js?v=20260701"></script>
+<script src="../../core/planning.js?v=20260701"></script>
+<script src="../../core/storage.js?v=20260701"></script>
+<script src="wizard-view.js?v=20260701"></script>
+<script src="wizard.js?v=20260701"></script>
 </body>
 </html>

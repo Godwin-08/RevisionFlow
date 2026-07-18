@@ -32,7 +32,7 @@ const History = (() => {
                 year: 'numeric' 
             });
 
-            const nomsMods = h.modules?.map(m => m.nom).slice(0, 3).join(', ')
+            const nomsMods = h.modules?.map(m => UI.echapperHTML(m.nom)).slice(0, 3).join(', ')
                 + (h.modules?.length > 3 ? ` +${h.modules.length - 3}` : '');
 
             const stats = h.stats || {};
@@ -157,7 +157,7 @@ const History = (() => {
                 <div class="hd-module-item">
                     <div class="hd-module-dot"
                          style="background:${m.couleur || 'var(--green)'}"></div>
-                    <div class="hd-module-nom">${m.nom}</div>
+                    <div class="hd-module-nom">${UI.echapperHTML(m.nom)}</div>
                     <div class="hd-module-etoiles">${etoiles}</div>
                     <div class="hd-module-date">Exam : ${dateExam}</div>
                     <div class="hd-module-pct">${ms?.pct || 0}%</div>
@@ -209,5 +209,7 @@ const History = (() => {
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
+    const saved = Storage?.charger?.();
+    if (saved?.prefs?.theme) State.appliquerTheme(saved.prefs.theme);
     History.init();
 });

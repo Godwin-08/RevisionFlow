@@ -158,7 +158,10 @@ const Dashboard = (() => {
             // Classes d'urgence — un seul getElementById
             if (_countdownEl) {
                 _countdownEl.classList.remove('urgence', 'critique');
-                if (urgence === 'urgence') _countdownEl.classList.add('urgence');
+                // Planning.formaterCountdown() renvoie 'alerte', pas 'urgence' —
+                // la comparaison précédente ne matchait jamais et l'état intermédiaire
+                // (J-7 à J-3) ne s'affichait donc jamais.
+                if (urgence === 'alerte') _countdownEl.classList.add('urgence');
                 if (urgence === 'critique') _countdownEl.classList.add('critique');
             }
         };
@@ -200,10 +203,11 @@ const Dashboard = (() => {
             const mod   = state.modules.find(m => m.id === moduleId);
             const res   = State.reporterSession(moduleId, date);
             if (res.success) {
+                const nomSafe = UI.echapperHTML(mod?.nom);
                 UI.toast(
                     res.misEnBacklog
-                        ? `Session de "${mod?.nom}" mise en backlog.`
-                        : `Session de "${mod?.nom}" reportée.`,
+                        ? `Session de "${nomSafe}" mise en backlog.`
+                        : `Session de "${nomSafe}" reportée.`,
                     res.misEnBacklog ? 'warning' : 'info'
                 );
             } else {
@@ -214,7 +218,7 @@ const Dashboard = (() => {
         anticiper() {
             const res = State.anticiperSession();
             if (res.success) {
-                UI.toast(`Session de "${res.module}" anticipée !`, 'success');
+                UI.toast(`Session de "${UI.echapperHTML(res.module)}" anticipée !`, 'success');
                 UI.confettis();
             } else {
                 UI.toast(res.message, 'warning');
@@ -309,11 +313,12 @@ const Dashboard = (() => {
         },
 
         supprimerModule(id, nom) {
+            const nomSafe = UI.echapperHTML(nom);
             UI.confirmer(
-                `Supprimer le module "${nom}" et toutes ses sessions ?`,
+                `Supprimer le module "${nomSafe}" et toutes ses sessions ?`,
                 () => {
                     State.supprimerModule(id);
-                    UI.toast(`Module "${nom}" supprimé.`, 'success');
+                    UI.toast(`Module "${nomSafe}" supprimé.`, 'success');
                 }
             );
         },

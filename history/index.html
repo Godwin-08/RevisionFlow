@@ -4,6 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RevisionFlow — Historique</title>
+    <script>
+        (function () {
+            try {
+                const raw = localStorage.getItem('revisionflow_data');
+                if (raw) {
+                    const data = JSON.parse(raw);
+                    if (data?.prefs?.theme) {
+                        document.documentElement.setAttribute('data-theme', data.prefs.theme);
+                    }
+                }
+            } catch (e) {}
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="../core/variables.css">
     <link rel="stylesheet" href="history.css">

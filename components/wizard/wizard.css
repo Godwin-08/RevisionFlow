@@ -18,6 +18,31 @@
     background: var(--primary-soft);
 }
 
+[data-theme="dark"] {
+    --wiz-bg: #020617;
+    --wiz-bg-alt: #0f172a;
+    --wiz-surface: #111827;
+    --wiz-surface-alt: #1e293b;
+    --wiz-surface-item: #0f172a;
+    --wiz-border: rgba(148, 163, 184, 0.16);
+    --wiz-border-strong: rgba(148, 163, 184, 0.24);
+    --shadow-premium: 0 30px 70px rgba(2, 6, 23, 0.45);
+}
+
+[data-theme="dark"] .wiz-header,
+[data-theme="dark"] .wiz-card,
+[data-theme="dark"] .wiz-section,
+[data-theme="dark"] .type-card,
+[data-theme="dark"] .input-box,
+[data-theme="dark"] .wiz-panel,
+[data-theme="dark"] .module-row,
+[data-theme="dark"] .cal-card,
+[data-theme="dark"] .linfo {
+    background: rgba(15, 23, 42, 0.95);
+    border-color: rgba(148, 163, 184, 0.16);
+    box-shadow: var(--shadow-premium);
+}
+
 /* Layout */
 .wiz-wrapper {
     min-height: 100vh;

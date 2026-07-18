@@ -18,6 +18,48 @@
     --shadow-premium: 0 40px 80px -15px rgba(0, 0, 0, 0.25);
 }
 
+[data-theme="dark"] {
+    --bg: #020617;
+    --bg-alt: #0f172a;
+    --border-soft: rgba(255, 255, 255, 0.08);
+    --accent: #38bdf8;
+    --warning: #f59e0b;
+    --primary-soft: rgba(59, 130, 246, 0.16);
+    --surface: #111827;
+    --text: #f8fafc;
+    --text-2: #cbd5e1;
+    --text-3: #94a3b8;
+    --border: rgba(148, 163, 184, 0.2);
+    --shadow-md: 0 10px 25px rgba(2, 6, 23, 0.35);
+    --shadow-xl: 0 30px 60px rgba(2, 6, 23, 0.45);
+    --shadow-premium: 0 35px 90px rgba(2, 6, 23, 0.5);
+}
+
+[data-theme="dark"] .nav,
+[data-theme="dark"] .preview-frame,
+[data-theme="dark"] .stats-band,
+[data-theme="dark"] .section-inner,
+[data-theme="dark"] .problem-card,
+[data-theme="dark"] .feature-card,
+[data-theme="dark"] .footer {
+    background: rgba(15, 23, 42, 0.9);
+    border-color: rgba(148, 163, 184, 0.16);
+    box-shadow: var(--shadow-xl);
+}
+
+[data-theme="dark"] .hero,
+[data-theme="dark"] .cta-section {
+    background: radial-gradient(circle at top right, rgba(37, 99, 235, 0.16), transparent), linear-gradient(135deg, #020617 0%, #0f172a 100%);
+}
+
+[data-theme="dark"] .mini-stat,
+[data-theme="dark"] .mini-card,
+[data-theme="dark"] .preview-url,
+[data-theme="dark"] .mini-sidebar {
+    background: rgba(15, 23, 42, 0.92);
+    border-color: rgba(148, 163, 184, 0.16);
+}
+
 /* ================================================
    RESET & BASE
 ================================================ */

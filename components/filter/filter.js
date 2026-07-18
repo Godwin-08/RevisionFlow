@@ -72,11 +72,12 @@ const Filters = (() => {
         if (_filtreStat === 'done')   result = result.filter(s => s.faite);
         if (_filtreStat === 'missed') {
             result = result.filter(s => {
-                // Recherche robuste du jour par contenu si la référence est perdue (cloneState)
-                const jour = plan.find(j => j.sessions.some(sess => 
-                    sess.moduleId === s.moduleId && sess.scoreSnapshot === s.scoreSnapshot
-                ));
-                return !s.faite && (s.date || jour?.date) < today;
+                const jour = plan.find(j => (j.sessions || []).some(sess => {
+                    if (sess.id && s.id && sess.id === s.id) return true;
+                    return sess.moduleId === s.moduleId && sess.scoreSnapshot === s.scoreSnapshot;
+                }));
+                const sessionDate = s.date || jour?.date;
+                return !s.faite && !!sessionDate && sessionDate < today;
             });
         }
 
@@ -142,7 +143,7 @@ const Filters = (() => {
                                     ? `background:${m.couleur};border-color:${m.couleur};color:white`
                                     : `border-left:3px solid ${m.couleur}`
                                 }"
-                            >${m.nom}</button>
+                            >${UI.echapperHTML(m.nom)}</button>
                         `).join('')}
                     </div>
                 </div>

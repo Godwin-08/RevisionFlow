@@ -177,7 +177,7 @@ const Pomodoro = (() => {
         const mod = state.modules.find(m => m.id === session.moduleId);
 
         UI.confirmer(
-            `Excellent travail ! Souhaites-tu marquer la session de "${mod?.nom || 'Module'}" comme terminée ?`,
+            `Excellent travail ! Souhaites-tu marquer la session de "${UI.echapperHTML(mod?.nom || 'Module')}" comme terminée ?`,
             () => {
                 Dashboard.toggleSession(today, session.moduleId, session.id);
             },

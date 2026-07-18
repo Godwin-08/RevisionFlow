@@ -4,6 +4,19 @@
 
 const UI = (() => {
     return {
+        // Échappe les caractères HTML spéciaux avant injection via innerHTML.
+        // À utiliser systématiquement pour toute donnée saisie par l'utilisateur
+        // (nom de module, notes, etc.) rendue dans un template HTML.
+        echapperHTML(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        },
+
         NOMS_MOIS: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
         JOURS_SEM: ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'],
 
@@ -68,9 +81,10 @@ const UI = (() => {
                 info:    '#3B82F6',
                 warning: 'var(--orange)'
             };
+            const safeMessage = this.echapperHTML(message);
             const toast = document.createElement('div');
             toast.style.cssText = `display: flex; align-items: center; gap: 12px; padding: 13px 16px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid ${couleurs[type]}; border-radius: var(--radius-md); box-shadow: var(--shadow-lg); min-width: 260px; max-width: 360px; pointer-events: all; cursor: pointer; animation: slideIn 0.35s var(--ease-back); position: relative; overflow: hidden;`;
-            toast.innerHTML = `<span style="color:${couleurs[type]};width:16px;height:16px;flex-shrink:0;display:flex;">${icones[type]}</span><span style="font-size:13px;font-weight:500;color:var(--text);flex:1;line-height:1.4;">${message}</span><div style="position:absolute;bottom:0;left:0;height:2px;background:${couleurs[type]};animation:toastBar ${duree}ms linear forwards;"></div>`;
+            toast.innerHTML = `<span style="color:${couleurs[type]};width:16px;height:16px;flex-shrink:0;display:flex;">${icones[type]}</span><span style="font-size:13px;font-weight:500;color:var(--text);flex:1;line-height:1.4;">${safeMessage}</span><div style="position:absolute;bottom:0;left:0;height:2px;background:${couleurs[type]};animation:toastBar ${duree}ms linear forwards;"></div>`;
             if (!document.getElementById('toast-keyframes')) {
                 const style = document.createElement('style');
                 style.id = 'toast-keyframes';
@@ -201,9 +215,10 @@ const UI = (() => {
         },
         // Modal de confirmation
         confirmer(message, onOui, onNon = null, labels = { oui: 'Confirmer', non: 'Annuler' }) {
+            const safeMessage = this.echapperHTML(message);
             const overlay = document.createElement('div');
             overlay.style.cssText = `position:fixed; inset:0; background:rgba(15,28,46,0.5); backdrop-filter:blur(4px); z-index:var(--z-modal); display:flex; align-items:center; justify-content:center; animation:fadeIn 0.2s ease;`;
-            overlay.innerHTML = `<div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-xl); padding:2rem; max-width:400px; width:90%; box-shadow:var(--shadow-lg); animation:scaleIn 0.25s var(--ease);"><div style="font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--text); margin-bottom:0.75rem;">Confirmation</div><div style="font-size:14px; color:var(--text-2); line-height:1.6; margin-bottom:1.5rem;">${message}</div><div style="display:flex; gap:10px; justify-content:flex-end;"><button id="conf-non" class="btn btn-ghost btn-sm">${labels.non}</button><button id="conf-oui" class="btn btn-danger btn-sm">${labels.oui}</button></div></div>`;
+            overlay.innerHTML = `<div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-xl); padding:2rem; max-width:400px; width:90%; box-shadow:var(--shadow-lg); animation:scaleIn 0.25s var(--ease);"><div style="font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--text); margin-bottom:0.75rem;">Confirmation</div><div style="font-size:14px; color:var(--text-2); line-height:1.6; margin-bottom:1.5rem;">${safeMessage}</div><div style="display:flex; gap:10px; justify-content:flex-end;"><button id="conf-non" class="btn btn-ghost btn-sm">${labels.non}</button><button id="conf-oui" class="btn btn-danger btn-sm">${labels.oui}</button></div></div>`;
             document.body.appendChild(overlay);
             const fermer = () => overlay.remove();
             overlay.querySelector('#conf-oui').addEventListener('click', () => {

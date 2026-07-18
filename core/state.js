@@ -57,6 +57,12 @@ const State = (() => {
         _subscribers.forEach(fn => fn(deepCopy(_data)));
     }
 
+    function _appliquerTheme(theme) {
+        const nextTheme = theme || 'light';
+        _data.prefs.theme = nextTheme;
+        document.documentElement.setAttribute('data-theme', nextTheme);
+    }
+
     return {
         get() { return deepCopy(_data); },
         getKey(key) { return deepCopy(_data[key]); },
@@ -92,9 +98,15 @@ const State = (() => {
                 });
 
                 const theme = _data.prefs?.theme || 'light';
-                document.documentElement.setAttribute('data-theme', theme);
+                this.appliquerTheme(theme);
                 await this.chargerJoursFeries();
-                this.planifier();
+
+                if ((_data.plan?.length || 0) === 0 && (_data.modules?.length || 0) > 0) {
+                    this.planifier();
+                } else {
+                    _recalculerStats();
+                    Storage.sauvegarder(_data);
+                }
             } else {
                 await this.chargerJoursFeries();
             }
@@ -231,6 +243,12 @@ const State = (() => {
             _data.config.heuresSoir = parseFloat(soir) || 2;
             _data.config.heuresWeekend = parseFloat(weekend) || 6;
             this.planifier();
+        },
+
+        appliquerTheme(theme = null) {
+            const nextTheme = theme ?? _data.prefs?.theme ?? 'light';
+            _data.prefs.theme = nextTheme;
+            document.documentElement.setAttribute('data-theme', nextTheme);
         },
 
         toggleTheme() {

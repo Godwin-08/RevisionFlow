@@ -29,7 +29,6 @@ const WizardView = (() => {
                 container.innerHTML = `<div class="empty-state"><div class="empty-state-title">Aucun module ajouté</div></div>`;
                 return;
             }
-            console.log(`✅ Rendu de ${modules.length} module(s)`);
             container.innerHTML = modules.map(mod => this.moduleRowHTML(mod)).join('');
         },
 
@@ -65,7 +64,7 @@ const WizardView = (() => {
                            class="module-input-name" 
                            type="text" 
                            placeholder="Ex: Analyse mathématique..." 
-                           value="${mod.nom || ''}" 
+                           value="${UI.echapperHTML(mod.nom || '')}" 
                            oninput="Wizard._updateNom('${mod.id}', this.value)">
                     <button class="module-delete-btn" onclick="Wizard._supprimerModule('${mod.id}')" title="Supprimer">
                         ${iconeTrash}
@@ -152,7 +151,6 @@ const WizardView = (() => {
                     </div>
                 </div>
                 <div class="wiz-cal-grid">${entetes}${cellules}</div>`;
-                console.log("✅ Calendrier généré avec succès");
             } catch (err) {
                 console.error("Erreur dans rendreCalendrier", err);
                 container.innerHTML = '<div class="empty-state">Erreur de génération du calendrier</div>';

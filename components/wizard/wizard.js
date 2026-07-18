@@ -34,12 +34,12 @@ const Wizard = (() => {
                 return false;
             }
             if (!mod.dateExam) {
-                UI.toast(`Indique la date d'examen pour "${mod.nom}".`, 'error');
+                UI.toast(`Indique la date d'examen pour "${UI.echapperHTML(mod.nom)}".`, 'error');
                 UI.secouer(document.getElementById('wiz-card'));
                 return false;
             }
             if (mod.dateExam <= debut) {
-                UI.toast(`La date d'examen de "${mod.nom}" doit être après le début des révisions.`, 'error');
+                UI.toast(`La date d'examen de "${UI.echapperHTML(mod.nom)}" doit être après le début des révisions.`, 'error');
                 UI.secouer(document.getElementById('wiz-card'));
                 return false;
             }
@@ -111,7 +111,6 @@ const Wizard = (() => {
         mettreAJourUI();
 
         if (n === 3) {
-            console.log("🏁 Entrée dans l'étape 3");
             // Chargement des jours fériés (non bloquant)
             chargerJoursFeeries().catch(e => console.warn(e));
             // Premier rendu immédiat
@@ -142,7 +141,6 @@ const Wizard = (() => {
     }
 
     function rendreListe() {
-        console.log('🔄 rendreListe() appelée, modules =', _modules);
         WizardView.rendreListe(_modules);
     }
 
@@ -152,7 +150,6 @@ const Wizard = (() => {
 
     return {
         init() {
-            console.log('🚀 Initialisation du Wizard');
             const today = Planning.toStr(new Date());
             const debutInput = document.getElementById('f-debut');
             if (debutInput) debutInput.value = today;
@@ -168,20 +165,10 @@ const Wizard = (() => {
             _calAnnee = new Date().getFullYear();
 
             // Premier module
-            this.ajouterModule();
-
-            // Sécurité : forcer le rendu plusieurs fois
-            setTimeout(() => {
-                if (_modules.length === 0) {
-                    console.warn('⚠️ Aucun module, ajout forcé');
-                    this.ajouterModule();
-                } else {
-                    WizardView.rendreListe(_modules);
-                }
-            }, 100);
-            setTimeout(() => {
-                WizardView.rendreListe(_modules);
-            }, 300);
+            if (!_modules.length) {
+                this.ajouterModule();
+            }
+            WizardView.rendreListe(_modules);
 
             mettreAJourUI();
         },
@@ -199,7 +186,6 @@ const Wizard = (() => {
         },
 
         suivant(etape) {
-            console.log(`➡️ Suivant depuis étape ${etape}`);
             if (etape === 1 && !validerEtape1()) return;
             if (etape === 2 && !validerEtape2()) return;
             allerEtape(etape + 1);
@@ -222,7 +208,6 @@ const Wizard = (() => {
                 couleur: palette[_modules.length % palette.length]
             };
             _modules.push(mod);
-            console.log(`📦 Module ajouté (id=${newId}), total = ${_modules.length}`);
             rendreListe();
             setTimeout(() => {
                 document.getElementById(`mnom-${newId}`)?.focus();
@@ -311,7 +296,14 @@ const Wizard = (() => {
 
 // ---- Init ----
 document.addEventListener('DOMContentLoaded', () => {
-    const saved = Storage.charger();
+    const saved = Storage?.charger?.();
+    const savedTheme = saved?.prefs?.theme;
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        if (typeof State?.appliquerTheme === 'function') {
+            State.appliquerTheme(savedTheme);
+        }
+    }
     if (saved?.plan?.length) {
         UI.confirmer(
             'Un planning existe déjà. Veux-tu le continuer ou en créer un nouveau ?',
