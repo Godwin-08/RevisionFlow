@@ -425,7 +425,6 @@ const Pomodoro = (() => {
             );
             _sauvegarderEtat();
         },
-        },
 
         // Passer manuellement en mode pause
         passerPause() {
