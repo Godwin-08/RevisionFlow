@@ -1,4 +1,4 @@
-# RevisionFlow 📚
+# RevisionFlow
 
 > **Planificateur de révisions intelligent, adaptatif et temps réel — 100 % exécuté côté client, zéro inscription, zéro dépendance serveur.**
 
@@ -12,36 +12,36 @@
 
 ---
 
-## 📑 Sommaire
+## Sommaire
 
-1. [Introduction](#-introduction)
-2. [Nos 4 principes](#-nos-4-principes)
-3. [Ce que fait l'application](#-ce-que-fait-lapplication)
+1. [Introduction](#introduction)
+2. [Nos 4 principes](#nos-4-principes)
+3. [Ce que fait l'application](#ce-que-fait-lapplication)
    - [1. L'assistant de configuration (Wizard)](#1-lassistant-de-configuration-wizard)
    - [2. Le tableau de bord (Dashboard)](#2-le-tableau-de-bord-dashboard)
    - [3. Le minuteur Pomodoro](#3-le-minuteur-pomodoro)
    - [4. L'historique](#4-lhistorique)
-4. [Comment le planning est calculé](#-comment-le-planning-est-calculé)
+4. [Comment le planning est calculé](#comment-le-planning-est-calculé)
    - [4.1 Le score de priorité](#41-le-score-de-priorité)
    - [4.2 L'alternance entre les matières](#42-lalternance-entre-les-matières)
    - [4.3 Le calcul, jour par jour](#43-le-calcul-jour-par-jour)
    - [4.4 Le passé ne change pas + le backlog](#44-le-passé-ne-change-pas--le-backlog)
-5. [Comment c'est construit](#-comment-cest-construit)
+5. [Comment c'est construit](#comment-cest-construit)
    - [Les fichiers du projet](#les-fichiers-du-projet)
    - [Le store (State)](#le-store-state)
    - [Les données de l'application](#les-données-de-lapplication)
    - [Comment les données sont gardées](#comment-les-données-sont-gardées)
-6. [Le design de l'application](#-le-design-de-lapplication)
-7. [Installer et lancer le projet](#-installer-et-lancer-le-projet)
-8. [Tests & validation](#-tests--validation)
-9. [Services externes utilisés](#-services-externes-utilisés)
-10. [Conseils d'utilisation](#-conseils-dutilisation)
-11. [À propos de l'auteur](#-à-propos-de-lauteur)
-12. [Licence](#-licence)
+6. [Le design de l'application](#le-design-de-lapplication)
+7. [Installer et lancer le projet](#installer-et-lancer-le-projet)
+8. [Tests & validation](#tests--validation)
+9. [Services externes utilisés](#services-externes-utilisés)
+10. [Conseils d'utilisation](#conseils-dutilisation)
+11. [À propos de l'auteur](#à-propos-de-lauteur)
+12. [Licence](#licence)
 
 ---
 
-## 🎯 Introduction
+## Introduction
 
 **RevisionFlow** est une application web qui aide les étudiants à réviser pour leurs examens.
 
@@ -49,27 +49,27 @@ Les outils habituels (agendas, tableurs, listes de tâches) deviennent faux dès
 
 ```mermaid
 flowchart LR
-    A["👤 Profil Étudiant & Modules"] --> B["⚙️ Algorithme Glouton & Priorité"]
-    B --> C["📅 Planning Personnalisé"]
-    C --> D["⚡ Action Utilisateur (Fait / Report / Urgence)"]
+    A["Profil Étudiant & Modules"] --> B["Algorithme Glouton & Priorité"]
+    B --> C["Planning Personnalisé"]
+    C --> D["Action Utilisateur (Fait / Report / Urgence)"]
     D -->|"Recalcul Immédiat"| B
-    C --> E["📊 KPIs, Streak & Vélocité"]
+    C --> E["KPIs, Streak & Vélocité"]
 ```
 
 ---
 
-## 💡 Nos 4 principes
+## Nos 4 principes
 
 | Principe | Comment ça marche | Ce que ça t'apporte |
 |---|---|---|
-| **🚀 Zéro contrainte** | Tout tourne dans ton navigateur. Pas de compte, pas de serveur, pas de base de données en ligne. | Tu commences en 30 secondes. Tes données restent sur ton ordinateur. |
-| **🔍 On te dit tout** | Si tu n'as pas assez de temps avant un examen, l'application ne cache rien. Les sessions en trop vont dans le **backlog**. | Tu vois le problème tout de suite. Tu évites le burn-out (l'épuisement). |
-| **⚡ Tout est instantané** | Un store unique (`State`) recalcule tout dès que quelque chose change. | Le planning suit ta vie, et pas l'inverse. |
-| **🧠 On alterne les matières** | Une matière déjà traitée dans la journée est pénalisée : son score est divisé par $2^k$. | Tu retiens mieux sur la durée. C'est le principe de l'*interleaving* (alternance). |
+| **Zéro contrainte** | Tout tourne dans ton navigateur. Pas de compte, pas de serveur, pas de base de données en ligne. | Tu commences en 30 secondes. Tes données restent sur ton ordinateur. |
+| **On te dit tout** | Si tu n'as pas assez de temps avant un examen, l'application ne cache rien. Les sessions en trop vont dans le **backlog**. | Tu vois le problème tout de suite. Tu évites le burn-out (l'épuisement). |
+| **Tout est instantané** | Un store unique (`State`) recalcule tout dès que quelque chose change. | Le planning suit ta vie, et pas l'inverse. |
+| **On alterne les matières** | Une matière déjà traitée dans la journée est pénalisée : son score est divisé par $2^k$. | Tu retiens mieux sur la durée. C'est le principe de l'*interleaving* (alternance). |
 
 ---
 
-## 🧩 Ce que fait l'application
+## Ce que fait l'application
 
 ### 1. L'assistant de configuration (Wizard)
 
@@ -159,7 +159,7 @@ La page d'historique garde une trace de tes résultats. Elle est en lecture seul
 
 ---
 
-## 📐 Comment le planning est calculé
+## Comment le planning est calculé
 
 Le cœur de RevisionFlow est un algorithme. Il place les sessions une par une et prend toujours la matière la plus urgente. Tout est écrit dans [`core/planning.js`](core/planning.js), sous forme de fonctions pures : elles ne changent rien en dehors d'elles-mêmes.
 
@@ -201,7 +201,7 @@ Exemple sur une journée de 3 sessions :
 - Créneau 1 : Algèbre (P=37.4, k=0) est choisi. Son k passe à 1.
 - Créneau 2 : Algèbre (37.4 / 2 = 18.7) contre Réseaux (21.0, k=0). Réseaux gagne ! k passe à 1.
 - Créneau 3 : Algèbre (18.7) contre Réseaux (10.5) contre Électronique (7.8). Algèbre est choisi.
-Résultat : Algèbre ➔ Réseaux ➔ Algèbre (les matières s'alternent).
+Résultat : Algèbre → Réseaux → Algèbre (les matières s'alternent).
 ```
 
 ---
@@ -232,7 +232,7 @@ Pour chaque jour du calendrier :
 
 ---
 
-## 🏗️ Comment c'est construit
+## Comment c'est construit
 
 ### Les fichiers du projet
 
@@ -397,7 +397,7 @@ interface RevisionFlowState {
 
 ---
 
-## 🎨 Le design de l'application
+## Le design de l'application
 
 Tout le style est regroupé dans un seul fichier : [`core/variables.css`](core/variables.css). On y trouve tous les « tokens », c'est-à-dire les variables qui définissent les couleurs, les polices et les espaces.
 
@@ -417,7 +417,7 @@ Tout le style est regroupé dans un seul fichier : [`core/variables.css`](core/v
 
 ---
 
-## 🚀 Installer et lancer le projet
+## Installer et lancer le projet
 
 RevisionFlow n'a besoin d'aucun serveur d'application. Pour éviter les blocages du navigateur (CORS, `fetch`), on conseille quand même d'utiliser un petit serveur HTTP local.
 
@@ -430,16 +430,16 @@ cd RevisionFlow
 # 2. Lancer le serveur HTTP local
 python serve.py
 ```
-👉 Ouvrez votre navigateur sur **[http://localhost:8080](http://localhost:8080)**
+Ouvrez votre navigateur sur **[http://localhost:8080](http://localhost:8080)**
 
-> ⚠️ **Pourquoi ce script et pas `python -m http.server` ?** Le serveur standard ne dit pas au navigateur quel encodage utiliser pour les fichiers `text/*`. Le navigateur bascule alors en Latin-1, et **tous les accents de l'interface deviennent faux**. `serve.py` force `charset=utf-8`.
+> **Pourquoi ce script et pas `python -m http.server` ?** Le serveur standard ne dit pas au navigateur quel encodage utiliser pour les fichiers `text/*`. Le navigateur bascule alors en Latin-1, et **tous les accents de l'interface deviennent faux**. `serve.py` force `charset=utf-8`.
 
 ### Option B : avec Node.js et npx
 ```bash
 # Dans le dossier RevisionFlow :
 npx serve -l 8080 .
 ```
-👉 Ouvrez votre navigateur sur **[http://localhost:8080](http://localhost:8080)**
+Ouvrez votre navigateur sur **[http://localhost:8080](http://localhost:8080)**
 
 ---
 
@@ -457,7 +457,7 @@ php -S localhost:8080
 
 ---
 
-## 🧪 Tests & validation
+## Tests & validation
 
 Quatre suites de tests sont gardées dans [`scratch/`](scratch). L'application ne les charge jamais.
 
@@ -468,11 +468,11 @@ Quatre suites de tests sont gardées dans [`scratch/`](scratch). L'application n
 | `test-v32-xp.js` | Chrome lancé avec `--remote-debugging-port=9222`, puis `node scratch/test-v32-xp.js` | L'XP de bout en bout, le bilan, le rechargement de la page, l'adaptation aux petits écrans (9 tests) |
 | `audit-v35-runtime.js` | `python serve.py` + Chrome avec `--remote-debugging-port=9222`, puis `node scratch/audit-v35-runtime.js` | Un audit complet : métadonnées, réseau, console, contraste, accessibilité, écrans, navigation, modales, Pomodoro, états. Il sépare bien **PASS**, **FAIL**, **N/A** et **INFO** |
 
-> 💡 Pour lancer l'audit, ouvre le tableau de bord dans la fenêtre Chrome de debug, puis lance le script. Un **FAIL** reste toujours bloquant.
+> Pour lancer l'audit, ouvre le tableau de bord dans la fenêtre Chrome de debug, puis lance le script. Un **FAIL** reste toujours bloquant.
 
 ---
 
-## 🌐 Services externes utilisés
+## Services externes utilisés
 
 | Service | Fournisseur | Rôle | Lien utilisé |
 |---|---|---|---|
@@ -482,7 +482,7 @@ Quatre suites de tests sont gardées dans [`scratch/`](scratch). L'application n
 
 ---
 
-## ⚡ Conseils d'utilisation
+## Conseils d'utilisation
 
 > [!TIP]
 > **Commence par tes matières les plus dures.** Le score de priorité regarde le nombre d'étoiles et le nombre de chapitres. Mets 4 ou 5 étoiles aux matières lourdes : elles seront vues en premier.
@@ -495,7 +495,7 @@ Quatre suites de tests sont gardées dans [`scratch/`](scratch). L'application n
 
 ---
 
-## 🎓 À propos de l'auteur
+## À propos de l'auteur
 
 Ce projet a été imaginé, conçu et développé dans un cadre académique :
 
@@ -507,7 +507,7 @@ Ce projet a été imaginé, conçu et développé dans un cadre académique :
 
 ---
 
-## 📄 Licence
+## Licence
 
 Ce logiciel est distribué sous les termes de la licence libre **MIT**. Vous êtes libre de l'utiliser, le modifier et de l'adapter pour vos besoins personnels et pédagogiques.
 
