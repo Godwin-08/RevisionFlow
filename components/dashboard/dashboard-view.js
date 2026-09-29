@@ -111,8 +111,25 @@ const DashboardView = (() => {
             // 5. Rendu Colonne 2 : Focus Actuel
             this._rendreColonneFocus(focusSession, modMap, today, state);
 
+            // 5b. L'indicateur « En cours » ne s'affiche que si le chrono tourne
+            this._majIndicateurFocus();
+
             // 6. Rendu Colonne 3 : Terminées
             this._rendreColonneDone(doneSessions, modMap, today);
+        },
+
+        // Affiche la pastille pulsée et le badge « En cours » uniquement quand le
+        // Pomodoro est réellement démarré. Sans session active, le badge serait
+        // mensonger : le panneau affiche déjà l'état vide ou le programme terminé.
+        _majIndicateurFocus() {
+            const dot = document.getElementById('focus-live-dot');
+            const tag = document.getElementById('focus-live-tag');
+            if (!dot || !tag) return;
+            const enCours = (typeof Pomodoro !== 'undefined' && Pomodoro.etat)
+                ? !!Pomodoro.etat.enCours
+                : false;
+            dot.classList.toggle('hidden', !enCours);
+            tag.classList.toggle('hidden', !enCours);
         },
 
         _rendreHeader(state, sessions, today) {
@@ -500,6 +517,11 @@ const DashboardView = (() => {
         },
 
         syncTimerDisplay() {
+            // L'indicateur « En cours » est piloté par l'état du chrono, pas par
+            // la présence des chiffres : appelé en premier, il reste correct même
+            // quand le panneau Focus est vide (guard `!digits` ci-dessous).
+            this._majIndicateurFocus();
+
             const digits = document.getElementById('focus-timer-digits');
             const toggleBtn = document.getElementById('btn-focus-timer-toggle');
             if (!digits) return;

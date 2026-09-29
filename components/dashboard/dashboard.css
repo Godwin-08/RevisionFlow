@@ -479,6 +479,12 @@ body {
     padding: 2px var(--space-2);
     border-radius: var(--radius-full);
 }
+/* L'indicateur « En cours » n'apparaît que si le chrono tourne réellement
+   (voir DashboardView._majIndicateurFocus). Masqué par défaut dans le HTML. */
+.col-status-dot.hidden,
+.col-tag-live.hidden {
+    display: none;
+}
 
 .board-card-list {
     display: flex;
