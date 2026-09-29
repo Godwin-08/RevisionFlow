@@ -5,7 +5,7 @@
 const State = (() => {
 
     const initial = {
-        palette: ['#2D9E6B', '#E8730A', '#3B82F6', '#8B5CF6', '#EC4899', '#14B8A6', '#F59E0B', '#6366F1'],
+        palette: ['#4F46E5', '#10B981', '#F97316', '#8B5CF6', '#EC4899', '#14B8A6', '#F59E0B', '#6366F1'], // palette V3
         profil: { type: null, configFait: false },
         config: {
             dateDebut: '',
@@ -20,7 +20,7 @@ const State = (() => {
         modules: [],
         plan: [],
         backlog: [],
-        stats: { totalSessions: 0, sessionsFaites: 0, joursRestants: 0, pourcentage: 0, velocite: 0, streak: 0 },
+        stats: { totalSessions: 0, sessionsFaites: 0, joursRestants: 0, pourcentage: 0, velocite: 0, streak: 0, xpTotal: 0, xpAujourdhui: 0, xpObjectifsQuotidiens: 0, objectifsAtteints: 0 },
         notes: {},
         historique: [],
         prefs: { filtre: { statut: 'tous', module: 'tous', semaine: null }, theme: 'light' }
@@ -91,15 +91,19 @@ const State = (() => {
                 _data = deepMerge(initial, saved);
                 
                 // Migration : Assure un ID unique pour chaque session existante
-                _data.plan.forEach(j => {
-                    j.sessions.forEach(s => {
-                        if (!s.id) s.id = `mig_${Math.random().toString(36).slice(2, 9)}`;
+                if (Array.isArray(_data.plan)) {
+                    _data.plan.forEach(j => {
+                        if (j && Array.isArray(j.sessions)) {
+                            j.sessions.forEach(s => {
+                                if (s && !s.id) s.id = `mig_${Math.random().toString(36).slice(2, 9)}`;
+                            });
+                        }
                     });
-                });
+                }
 
                 const theme = _data.prefs?.theme || 'light';
                 this.appliquerTheme(theme);
-                await this.chargerJoursFeries();
+                this.chargerJoursFeries(); // Lancé en arrière-plan sans bloquer l'affichage
 
                 if ((_data.plan?.length || 0) === 0 && (_data.modules?.length || 0) > 0) {
                     this.planifier();
@@ -108,7 +112,7 @@ const State = (() => {
                     Storage.sauvegarder(_data);
                 }
             } else {
-                await this.chargerJoursFeries();
+                this.chargerJoursFeries();
             }
         },
 
@@ -120,10 +124,20 @@ const State = (() => {
                     `https://date.nager.at/api/v3/PublicHolidays/${anneeEnCours}/${pays}`,
                     `https://date.nager.at/api/v3/PublicHolidays/${anneeEnCours + 1}/${pays}`
                 ];
-                const resultats = await Promise.all(urls.map(url => fetch(url).then(res => res.ok ? res.json() : [])));
-                const toutesLesDates = resultats.flat().map(h => h.date);
-                _data.joursFeries = [...new Set(toutesLesDates)];
-                _sauvegarder();
+                const fetchWithTimeout = (url) => {
+                    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+                    const timeoutId = controller ? setTimeout(() => controller.abort(), 2000) : null;
+                    return fetch(url, controller ? { signal: controller.signal } : {})
+                        .then(res => res.ok ? res.json() : [])
+                        .catch(() => [])
+                        .finally(() => { if (timeoutId) clearTimeout(timeoutId); });
+                };
+                const resultats = await Promise.all(urls.map(fetchWithTimeout));
+                const toutesLesDates = resultats.flat().map(h => h.date).filter(Boolean);
+                if (toutesLesDates.length > 0) {
+                    _data.joursFeries = [...new Set(toutesLesDates)];
+                    _sauvegarder();
+                }
             } catch (e) { console.warn("Fetch jours fériés échoué", e); }
         },
 
@@ -175,13 +189,35 @@ const State = (() => {
             if (session.statut === 'termine') {
                 session.statut = 'en_attente';
                 session.faite = false;
+                session.termineA = null;
                 mod.sessionsValidees = Math.max(0, (mod.sessionsValidees || 0) - 1);
             } else {
                 session.statut = 'termine';
                 session.faite = true;
+                session.termineA = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
                 mod.sessionsValidees = (mod.sessionsValidees || 0) + 1;
             }
             this.planifier();
+            return true;
+        },
+
+        enregistrerBilanSession(idModule, date, sessionId, { note, maitrise }) {
+            const jour = _data.plan.find(j => j.date === date);
+            if (!jour) return false;
+            const session = sessionId 
+                ? jour.sessions.find(s => s.id === sessionId) 
+                : jour.sessions.find(s => s.moduleId === idModule && s.faite);
+            if (!session) return false;
+
+            const valideLevels = ['facile', 'moyen', 'a-revoir'];
+            if (!valideLevels.includes(maitrise)) return false;
+
+            session.bilan = {
+                note: note ? String(note).trim() : '',
+                maitrise: maitrise,
+                date: new Date().toISOString()
+            };
+            _sauvegarder();
             return true;
         },
 

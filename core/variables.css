@@ -1,105 +1,269 @@
 /* ================================================
-   REVISIONFLOW — DESIGN SYSTEM CENTRALISÉ
-   Importer ce fichier en premier dans chaque composant
+   REVISIONFLOW — DESIGN SYSTEM V3
+   SOURCE UNIQUE DE VÉRITÉ du système visuel.
+   À importer en premier dans chaque page / composant.
+
+   Règles de la palette V3 :
+   • Indigo      = identité & action (CTA, focus, sélection)
+   • Émeraude    = succès (terminé, progression)
+   • Corail/rouge= difficulté & danger (à revoir, suppression)
+   • Amber       = attention (priorité moyenne, maîtrise partielle)
+   • Orange      = attention forte (surcharge, alerte)
+   • Or (reward) = récompense — RÉSERVÉ V3.x : ne pas l'utiliser partout
 ================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800;12..96,900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+
 :root {
 
-    /* --- Palette Sémantique Deep Tech --- */
-    --accent-primary:   #22d3ee;
-    --accent-secondary: #a855f7;
-    --success:          #10b981;
-    --warning:          #f59e0b;
-    --danger:           #ef4444;
-    --info:             #3b82f6;
+    /* ═══════════ 1. PRIMITIVES V3 ═══════════ */
 
-    /* --- Thème Clair --- */
-    --bg:             #f8fafc;
-    --bg-alt:         #f1f5f9;
-    --bg-gradient:    linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    --surface:        #ffffff;
-    --surface-hover:  #f8fafc;
-    --text:           #0f172a;
-    --text-muted:     #475569;
-    --text-dim:       #94a3b8;
-    --border:         rgba(0, 0, 0, 0.08);
-    --border-bright:  rgba(0, 0, 0, 0.15);
-    --glass-blur:     blur(12px);
-    --neon-shadow:    0 0 15px rgba(34, 211, 238, 0.3);
+    /* Indigo — identité & action */
+    --indigo-50:  #EEF2FF;
+    --indigo-300: #A5B4FC;
+    --indigo-500: #6366F1;
+    --indigo-600: #4F46E5;
+    --indigo-700: #4338CA;
 
-    /* --- Orange --- */
-    --orange:         #E8730A;
-    --orange-dark:    #c45e06;
-    --orange-light:   #fff3e8;
-    --orange-mid:     #fdd5a8;
+    /* Émeraude — succès */
+    --emerald-50:  #ECFDF5;
+    --emerald-300: #6EE7B7;
+    --emerald-400: #34D399;
+    --emerald-500: #10B981;
+    --emerald-600: #059669;
+    --emerald-700: #047857;
 
-    /* --- Red --- */
-    --red:            #D92B2B;
-    --red-dark:       #b91c1c;
-    --red-light:      #fee2e2;
-    --red-mid:        #fca5a5;
+    /* Corail — difficulté & danger */
+    --coral-50:  #FEF2F2;
+    --coral-100: #FEE2E2;
+    --coral-300: #FCA5A5;
+    --coral-400: #F87171;
+    --coral-500: #EF4444;
+    --coral-600: #DC2626;
+    --coral-700: #B91C1C;
 
-    /* --- Neutres --- */
-    --text-2:         #64748b;
-    --text-3:         #94a3b8;
-    --border-2:       #cbd5e1;
+    /* Amber — attention */
+    --amber-50:  #FFFBEB;
+    --amber-300: #FBBF24;
+    --amber-500: #F59E0B;
+    --amber-600: #D97706;
+    --amber-700: #B45309;
 
-    /* --- Vert --- */
-    --green:          #2D9E6B;
-    --green-dark:     #1a7a50;
-    --green-light:    #ecfdf5;
-    --green-mid:      #6ee7b7;
+    /* Orange — attention forte */
+    --orange-50:  #FFF7ED;
+    --orange-200: #FDD5A8;
+    --orange-300: #FDBA74;
+    --orange-500: #F97316;
+    --orange-600: #EA580C;
+    --orange-700: #9A3412;
 
-    /* --- Primary & Accents --- */
-    --purple-bg:      #eef2ff;
-    --cyan:           #22d3ee;
-    --primary:        #2563EB;
-    --primary-dark:   #1E40AF;
-    --primary-soft:   #EFF6FF;
-    --primary-gradient: linear-gradient(135deg, #2563EB, #06b6d4);
-    --success-gradient: linear-gradient(135deg, #10b981, #34d399);
+    /* Or — récompense (réservé V3.x : XP, streak, paliers) */
+    --gold-50:  #FEFCE8;
+    --gold-300: #FDE047;
+    --gold-500: #EAB308;
+    --gold-700: #854D0E;
 
-    /* --- Typographie --- */
+    /* Neutres clairs */
+    --neutral-0:   #FFFFFF;
+    --neutral-50:  #FAFAF9;
+    --neutral-100: #F4F4F5;
+    --neutral-150: #F1F1F3;
+    --neutral-400: #A1A1AA;
+    --neutral-500: #71717A;
+    --neutral-600: #6B6B75;
+    --neutral-700: #18181B;
+
+    /* Neutres sombres (thème dark) */
+    --ink-900: #0C0E14;
+    --ink-800: #141721;
+    --ink-700: #1B1F2D;
+    --ink-600: #222738;
+    --ink-300: #F4F4F5;
+    --ink-400: #A1A1AA;
+
+    /* ═══════════ 2. TOKENS SÉMANTIQUES — THÈME CLAIR ═══════════ */
+
+    /* Primaire — indigo : identité & action */
+    --color-primary:       var(--indigo-600);
+    --color-primary-hover: var(--indigo-700);
+    --color-primary-soft:  var(--indigo-50);
+    --color-primary-strong: var(--indigo-700);
+    --color-on-primary:    var(--neutral-0);
+
+    /* Succès — émeraude */
+    --color-success:        var(--emerald-500);
+    --color-success-hover:  var(--emerald-600);
+    --color-success-soft:   var(--emerald-50);
+    --color-success-strong: var(--emerald-700);
+
+    /* Attention — orange (= état d'alerte) */
+    --color-attention:        var(--orange-500);
+    --color-attention-hover:  var(--orange-600);
+    --color-attention-soft:   var(--orange-50);
+    --color-attention-strong: var(--orange-700);
+
+    /* Attention douce — amber (= priorité moyenne, maîtrise partielle) */
+    --color-amber:        var(--amber-500);
+    --color-amber-hover:  var(--amber-600);
+    --color-amber-soft:   var(--amber-50);
+    --color-amber-strong: var(--amber-700);
+
+    /* Danger / difficulté — corail */
+    --color-danger:        var(--coral-500);
+    --color-danger-hover:  var(--coral-600);
+    --color-danger-soft:   var(--coral-50);
+    --color-danger-strong: var(--coral-700);
+
+    /* Récompense — or (réservé V3.x) */
+    --color-reward:        var(--gold-500);
+    --color-reward-soft:   var(--gold-50);
+    --color-reward-strong: var(--gold-700);
+
+    /* Information — indigo clair */
+    --color-info: var(--indigo-500);
+
+    /* Fonds & surfaces */
+    --bg-page:       var(--neutral-50);
+    --surface:       var(--neutral-0);
+    --surface-2:     var(--neutral-100);
+    --surface-3:     var(--neutral-150);
+    --surface-hover: var(--neutral-100);
+    --surface-translucent: rgba(255, 255, 255, 0.85);
+
+    /* Texte — 3 niveaux + micro */
+    --text-primary:   var(--neutral-700);
+    --text-secondary: var(--neutral-600);
+    --text-muted:     var(--neutral-400);
+
+    /* Bordures */
+    --border-subtle:    rgba(0, 0, 0, 0.07);
+    --border-default:   rgba(0, 0, 0, 0.10);
+    --border-strong:    rgba(0, 0, 0, 0.15);
+    --border-primary:   rgba(79, 70, 229, 0.30);
+    --border-success:   rgba(16, 185, 129, 0.30);
+    --border-attention: rgba(249, 115, 22, 0.30);
+    --border-danger:    rgba(239, 68, 68, 0.25);
+
+    /* Overlay & anneau de focus */
+    --overlay:    rgba(12, 14, 20, 0.45);
+    --focus-ring: 0 0 0 3px rgba(79, 70, 229, 0.18);
+
+    /* ═══════════ 3. TYPOGRAPHIE ═══════════ */
     --font-display: 'Bricolage Grotesque', sans-serif;
     --font-body:    'Plus Jakarta Sans', sans-serif;
     --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
 
-    /* --- Espacements --- */
-    --space-xs:  4px;
-    --space-sm:  8px;
-    --space-md:  16px;
-    --space-lg:  24px;
-    --space-xl:  40px;
-    --space-2xl: 64px;
+    /* Échelle V3 : 36 / 32 / 24 / 22-20 / 16-18 / 13-14 / 12 / 11 - ajouts V3.1b: --text-btn, --text-xl-plus (24), --text-xl-compact (20) */
+    --text-2xl:         36px;   /* chrono / affichage majeur */
+    --text-2xl-compact: 32px;   /* chrono — variante mobile */
+    --text-xl-plus:     24px;   /* titres de panneau / gros chiffres (V3.1b: hérité 24px) */
+    --text-xl:          22px;   /* titres de page */
+    --text-xl-compact:  20px;   /* titres de détail (V3.1b: hérité 20px) */
+    --text-lg:          18px;   /* titres de section */
+    --text-md:          16px;   /* titres de carte */
+    --text-sm:          14px;   /* corps */
+    --text-xs:          13px;   /* corps dense / méta */
+    --text-2xs:         12px;   /* légendes */
+    --text-3xs:         12px;   /* micro-labels, badges (V3.1b: 11 -> 12) */
+    --text-4xs:         11px;   /* decoratif micro (V3.1b: 10 -> 11) */
+    --text-btn:         14px;   /* boutons - remplace le defaut 13.33px du navigateur */
 
-    /* --- Bordures --- */
+    /* ═══════════ 4. ESPACEMENTS ═══════════ */
+    --space-1:  4px;
+    --space-2:  8px;
+    --space-3:  12px;
+    --space-4:  16px;
+    --space-5:  20px;
+    --space-6:  24px;
+    --space-8:  32px;
+    --space-10: 40px;
+    --space-16: 64px;
+
+    /* ═══════════ 5. RAYONS ═══════════ */
+    --radius-2xs:  4px;
+    --radius-xs:   6px;
     --radius-sm:   8px;
     --radius-md:   12px;
     --radius-lg:   16px;
     --radius-xl:   20px;
     --radius-full: 999px;
 
-    /* --- Ombres --- */
-    --shadow-sm:  0 1px 3px rgba(15, 28, 46, 0.06), 0 1px 2px rgba(15, 28, 46, 0.04);
-    --shadow-md:  0 4px 16px rgba(15, 28, 46, 0.07), 0 1px 4px rgba(15, 28, 46, 0.04);
-    --shadow-lg:  0 10px 40px rgba(15, 28, 46, 0.09), 0 4px 12px rgba(15, 28, 46, 0.05);
-    --shadow-green:  0 4px 16px rgba(45, 158, 107, 0.25);
-    --shadow-orange: 0 4px 16px rgba(232, 115, 10, 0.25);
+    /* ═══════════ 6. OMBRES ═══════════ */
+    --shadow-sm: 0 1px 3px rgba(12, 14, 20, 0.06), 0 1px 2px rgba(12, 14, 20, 0.04);
+    --shadow-md: 0 4px 12px rgba(12, 14, 20, 0.05), 0 1px 3px rgba(12, 14, 20, 0.03);
+    --shadow-lg: 0 10px 30px -5px rgba(12, 14, 20, 0.08), 0 4px 6px -2px rgba(12, 14, 20, 0.03);
+    --shadow-success:   0 4px 16px rgba(16, 185, 129, 0.22);
+    --shadow-attention: 0 4px 16px rgba(249, 115, 22, 0.22);
 
-    /* --- Animations --- */
+    /* ═══════════ 7. MOUVEMENT ═══════════ */
     --ease:      cubic-bezier(0.16, 1, 0.3, 1);
     --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
     --ease-in:   cubic-bezier(0.4, 0, 1, 1);
     --ease-out:  cubic-bezier(0, 0, 0.2, 1);
     --duration-fast:   150ms;
+    --duration-base:   200ms;
     --duration-normal: 300ms;
     --duration-slow:   500ms;
+    --transition-fast: var(--duration-fast) var(--ease-out);
+    --transition-base: var(--duration-base) var(--ease-out);
 
-    /* --- Z-index --- */
-    --z-base:     1;
-    --z-dropdown: 10;
-    --z-sidebar:  40;
-    --z-modal:    80;
-    --z-toast:    100;
+    /* ═══════════ 8. Z-INDEX ═══════════ */
+    --z-sidebar: 40;
+    --z-modal:   80;
+    --z-toast:   100;
+
+    /* ═══════════ 9. ALIAS DE COMPATIBILITÉ ═══════════
+       Noms hérités (V1/V2) encore utilisés par wizard.css,
+       history.css, filter.css, landing.css et core/ui.js.
+       Ils pointent tous vers les tokens V3 : une seule valeur
+       en source. À ne pas utiliser pour du nouveau code. */
+
+    --bg:            var(--bg-page);
+    --bg-alt:        var(--surface-2);
+    --text:          var(--text-primary);
+    --text-main:     var(--text-primary);
+    --text-2:        var(--text-secondary);
+    --text-3:        var(--text-muted);
+    --text-dim:      var(--text-muted);
+    --border:        var(--border-subtle);
+    --border-bright: var(--border-strong);
+    --border-2:      var(--border-strong);
+    --border-hover:  var(--border-strong);
+
+    --primary:       var(--color-primary);
+    --primary-dark:  var(--color-primary-hover);
+    --primary-soft:  var(--color-primary-soft);
+    --purple-bg:     var(--color-primary-soft);
+    --info:          var(--color-info);
+    --cyan:          var(--indigo-500);
+
+    --success:       var(--color-success);
+    --warning:       var(--color-attention);
+    --danger:        var(--color-danger);
+
+    --green:         var(--color-success);
+    --green-dark:    var(--color-success-strong);
+    --green-light:   var(--color-success-soft);
+    --green-mid:     var(--emerald-300);
+
+    --orange:        var(--color-attention);
+    --orange-dark:   var(--color-attention-strong);
+    --orange-light:  var(--color-attention-soft);
+    --orange-mid:    var(--orange-200);
+
+    --red:           var(--color-danger);
+    --red-dark:      var(--color-danger-strong);
+    --red-light:     var(--coral-100);
+    --red-mid:       var(--coral-300);
+
+    --space-xs:  var(--space-1);
+    --space-sm:  var(--space-2);
+    --space-md:  var(--space-4);
+    --space-lg:  var(--space-6);
+    --space-xl:  var(--space-10);
+    --space-2xl: var(--space-16);
+
+    --shadow-green:  var(--shadow-success);
+    --shadow-orange: var(--shadow-attention);
 }
 
 /* ================================================
@@ -113,19 +277,27 @@
 
 html { scroll-behavior: smooth; }
 
+/* Boutons - taille d action uniforme (V3.1b):
+   remplace le 13.33px herite du navigateur.
+   Les regles de classe (.btn, .btn-sm...) restent prioritaires. */
+button {
+    font-size: var(--text-btn);
+}
+
 body {
     font-family: var(--font-body);
     background: var(--bg);
     color: var(--text);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
     overflow-x: hidden;
 }
 
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-    background: var(--green-mid);
+    background: var(--border-strong);
     border-radius: var(--radius-full);
 }
 
@@ -133,10 +305,11 @@ body {
    UTILITAIRES GLOBAUX
 ================================================ */
 
-.text-green  { color: var(--green); }
-.text-orange { color: var(--orange); }
-.text-red    { color: var(--danger); }
-.text-muted  { color: var(--text-2); }
+.text-green  { color: var(--color-success); }
+.text-orange { color: var(--color-attention); }
+.text-red    { color: var(--color-danger); }
+.text-amber  { color: var(--color-amber); }
+.text-muted  { color: var(--text-secondary); }
 
 /* Badges */
 .badge {
@@ -145,20 +318,22 @@ body {
     gap: var(--space-xs);
     padding: 3px 10px;
     border-radius: var(--radius-full);
-    font-size: 11px;
+    font-size: var(--text-3xs);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    line-height: 1.35;
 }
-.badge-green  { background: var(--green-light);  color: var(--green-dark); }
-.badge-orange { background: var(--orange-light); color: var(--orange-dark); }
-.badge-red    { background: var(--red-light);    color: var(--red-dark); }
-.badge-muted  { background: var(--bg); color: var(--text-2); border: 1px solid var(--border); }
+.badge-green  { background: var(--color-success-soft);   color: var(--color-success-strong); }
+.badge-orange { background: var(--color-attention-soft); color: var(--color-attention-strong); }
+.badge-red    { background: var(--color-danger-soft);    color: var(--color-danger-strong); }
+.badge-amber  { background: var(--color-amber-soft);     color: var(--color-amber-strong); }
+.badge-muted  { background: var(--surface-2); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
 
-/* Priorité */
-.priority-high   { background: var(--orange-light); color: var(--orange-dark); }
-.priority-medium { background: rgba(34, 211, 238, 0.1); color: var(--cyan); }
-.priority-low    { background: var(--bg); color: var(--text-2); border: 1px solid var(--border); }
+/* Priorité — même logique que le Dashboard : haute = difficulté, moyenne = attention */
+.priority-high   { background: var(--color-danger-soft);    color: var(--color-danger-strong); }
+.priority-medium { background: var(--color-amber-soft);     color: var(--color-amber-strong); }
+.priority-low    { background: var(--surface-2); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
 
 /* ================================================
    BOUTONS — source unique de vérité
@@ -173,7 +348,7 @@ body {
     border-radius: var(--radius-sm);
     border: none;
     font-family: var(--font-body);
-    font-size: 14px;
+    font-size: var(--text-btn);
     font-weight: 600;
     cursor: pointer;
     transition: all var(--duration-normal) var(--ease);
@@ -183,39 +358,39 @@ body {
 .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
 
 .btn-green {
-    background: var(--green);
-    color: white;
+    background: var(--emerald-700);
+    color: var(--color-on-primary);
     box-shadow: var(--shadow-green);
 }
 .btn-green:hover {
-    background: var(--green-dark);
+    background: var(--emerald-700);
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(45, 158, 107, 0.35);
+    box-shadow: var(--shadow-success);
 }
 .btn-green:active { transform: scale(0.97); }
 
 .btn-orange {
-    background: var(--orange-light);
-    color: var(--orange-dark);
+    background: var(--color-attention-soft);
+    color: var(--color-attention-strong);
     border: 1px solid var(--orange-mid);
 }
-.btn-orange:hover { background: #fde8c8; border-color: var(--orange); }
+.btn-orange:hover { border-color: var(--color-attention); }
 
 .btn-ghost {
     background: transparent;
-    color: var(--text-2);
-    border: 1.5px solid var(--border);
+    color: var(--text-secondary);
+    border: 1.5px solid var(--border-subtle);
 }
-.btn-ghost:hover { background: var(--bg); border-color: var(--border-2); color: var(--text); }
+.btn-ghost:hover { background: var(--surface-2); border-color: var(--border-strong); color: var(--text-primary); }
 
 .btn-danger {
-    background: var(--red-light);
-    color: var(--red-dark);
+    background: var(--color-danger-soft);
+    color: var(--color-danger-strong);
     border: 1px solid var(--red-mid);
 }
-.btn-danger:hover { background: #fecaca; }
+.btn-danger:hover { background: var(--coral-100); }
 
-.btn-sm { padding: 7px 14px; font-size: 13px; }
+.btn-sm { padding: 7px 14px; font-size: var(--text-xs); }
 .btn-sm svg { width: 13px; height: 13px; }
 
 /* ================================================
@@ -223,7 +398,7 @@ body {
 ================================================ */
 .card {
     background: var(--surface);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-lg);
     padding: var(--space-lg);
     transition: box-shadow var(--duration-normal);
@@ -231,9 +406,9 @@ body {
 .card:hover { box-shadow: var(--shadow-md); }
 .card-title {
     font-family: var(--font-display);
-    font-size: 15px;
+    font-size: var(--text-md);
     font-weight: 700;
-    color: var(--text);
+    color: var(--text-primary);
     letter-spacing: -0.2px;
     margin-bottom: var(--space-md);
 }
@@ -242,34 +417,34 @@ body {
 .progress-track {
     width: 100%;
     height: 8px;
-    background: var(--border);
+    background: var(--surface-2);
     border-radius: var(--radius-full);
     overflow: hidden;
 }
 .progress-fill {
     height: 100%;
-    background: var(--green);
+    background: var(--color-success);
     border-radius: var(--radius-full);
     transition: width 0.8s cubic-bezier(0.65, 0, 0.35, 1);
-    box-shadow: 0 0 8px rgba(45, 158, 107, 0.3);
+    box-shadow: 0 0 8px var(--color-success-soft);
 }
-.progress-fill.orange { background: var(--orange); }
-.progress-fill.red    { background: var(--red); }
+.progress-fill.orange { background: var(--color-attention); }
+.progress-fill.red    { background: var(--color-danger); }
 
 /* Input */
 .input-box {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
-    background: var(--bg);
-    border: 1.5px solid var(--border);
+    background: var(--surface-2);
+    border: 1.5px solid var(--border-subtle);
     border-radius: var(--radius-sm);
     padding: 0 14px;
     transition: all var(--duration-fast);
 }
 .input-box:focus-within {
-    border-color: var(--green);
-    box-shadow: 0 0 0 3px var(--green-light);
+    border-color: var(--color-primary);
+    box-shadow: var(--focus-ring);
     background: var(--surface);
 }
 .input-box input,
@@ -279,11 +454,11 @@ body {
     background: transparent;
     padding: 11px 0;
     font-family: var(--font-body);
-    font-size: 14px;
-    color: var(--text);
+    font-size: var(--text-sm);
+    color: var(--text-primary);
     outline: none;
 }
-.input-box input::placeholder { color: var(--text-3); }
+.input-box input::placeholder { color: var(--text-secondary); }
 
 /* Animations communes */
 @keyframes fadeUp {
@@ -302,22 +477,45 @@ body {
     from { opacity: 0; transform: scale(0.92); }
     to   { opacity: 1; transform: scale(1); }
 }
+/* Pulsation d'un état actif (ex. « Focus en cours ») */
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.45; transform: scale(0.85); }
+}
+/* Urgence du chrono (voir pomodoro.js) */
+@keyframes pulseCritique {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.5; transform: scale(1.05); }
+}
+/* Shake — erreur de validation de champ (voir UI.secouer) */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%      { transform: translateX(-6px); }
+    40%      { transform: translateX(6px); }
+    60%      { transform: translateX(-4px); }
+    80%      { transform: translateX(4px); }
+}
+/* Barre de progression d'un toast (voir UI.toast) */
+@keyframes toastBar {
+    from { width: 100%; }
+    to   { width: 0%; }
+}
 
 /* Empty state */
 .empty-state {
     text-align: center;
     padding: var(--space-xl) var(--space-md);
-    color: var(--text-3);
+    color: var(--text-secondary);
 }
-.empty-state-icon { width: 48px; height: 48px; margin: 0 auto var(--space-md); color: var(--border-2); }
+.empty-state-icon { width: 48px; height: 48px; margin: 0 auto var(--space-md); color: var(--border-strong); }
 .empty-state-title {
     font-family: var(--font-display);
-    font-size: 16px;
+    font-size: var(--text-md);
     font-weight: 700;
-    color: var(--text-2);
+    color: var(--text-secondary);
     margin-bottom: var(--space-xs);
 }
-.empty-state-desc { font-size: 13px; color: var(--text-3); line-height: 1.5; }
+.empty-state-desc { font-size: var(--text-xs); color: var(--text-secondary); line-height: 1.5; }
 
 /* ================================================
    TOAST — position définie une seule fois ici
@@ -339,54 +537,89 @@ body {
    THÈME SOMBRE
 ================================================ */
 [data-theme="dark"] {
-    --bg:            #0f172a;
-    --bg-gradient:   linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    --surface:       #1e293b;
-    --surface-hover: #334155;
-    --text:          #f1f5f9;
-    --text-muted:    #cbd5e1;
-    --text-dim:      #94a3b8;
-    --text-2:        #94a3b8;
-    --text-3:        #64748b;
-    --border:        rgba(255, 255, 255, 0.08);
-    --border-bright: rgba(255, 255, 255, 0.15);
-    --border-2:      #334155;
+    /* Surfaces V3 (encre) */
+    --bg-page:       var(--ink-900);
+    --surface:       var(--ink-800);
+    --surface-2:     var(--ink-700);
+    --surface-3:     var(--ink-600);
+    --surface-hover: var(--ink-700);
+    --surface-translucent: rgba(20, 23, 33, 0.85);
 
-    --primary:      #3b82f6;
-    --primary-dark: #2563eb;
-    --primary-soft: #1e3a5f;
+    /* Texte */
+    --text-primary:   var(--ink-300);
+    --text-secondary: var(--ink-400);
+    --text-muted:     var(--neutral-500);
 
-    --green:       #10b981;
-    --green-dark:  #059669;
-    --green-light: #064e3b;
-    --green-mid:   #34d399;
+    /* Bordures */
+    --border-subtle:    rgba(255, 255, 255, 0.08);
+    --border-default:   rgba(255, 255, 255, 0.10);
+    --border-strong:    rgba(255, 255, 255, 0.18);
+    --border-primary:   rgba(99, 102, 241, 0.35);
+    --border-success:   rgba(16, 185, 129, 0.35);
+    --border-attention: rgba(249, 115, 22, 0.35);
+    --border-danger:    rgba(239, 68, 68, 0.30);
 
-    --orange:       #f97316;
-    --orange-dark:  #ea580c;
-    --orange-light: #431407;
-    --orange-mid:   #fdba74;
+    /* Overlay & anneau de focus */
+    --overlay:    rgba(4, 6, 10, 0.60);
+    --focus-ring: 0 0 0 3px rgba(99, 102, 241, 0.25);
 
-    --red:       #ef4444;
-    --red-dark:  #dc2626;
-    --red-light: #7f1d1d;
-    --red-mid:   #f87171;
+    /* Primaire — indigo clair (meilleur contraste sur encre) */
+    --color-primary:       var(--indigo-500);
+    --color-primary-hover: var(--indigo-600);
+    --color-primary-soft:  rgba(99, 102, 241, 0.14);
+    --color-primary-strong: var(--indigo-300);
 
-    --shadow-sm:     0 1px 3px rgba(0, 0, 0, 0.3);
-    --shadow-md:     0 4px 16px rgba(0, 0, 0, 0.4);
-    --shadow-lg:     0 10px 40px rgba(0, 0, 0, 0.5);
-    --shadow-green:  0 4px 16px rgba(16, 185, 129, 0.2);
-    --shadow-orange: 0 4px 16px rgba(249, 115, 22, 0.2);
+    /* Succès */
+    --color-success-soft:   rgba(16, 185, 129, 0.12);
+    --color-success-strong: var(--emerald-400);
 
-    --wiz-bg:           #0f172a;
-    --wiz-bg-alt:       #1e293b;
-    --wiz-surface:      #1e293b;
-    --wiz-surface-alt:  #334155;
-    --wiz-surface-item: #0f172a;
-    --wiz-border:       #334155;
-    --wiz-border-strong:#475569;
+    /* Attention */
+    --color-attention-soft:   rgba(249, 115, 22, 0.14);
+    --color-attention-strong: var(--orange-300);
+    --color-amber-soft:       rgba(245, 158, 11, 0.12);
+    --color-amber-strong:     var(--amber-300);
+
+    /* Danger */
+    --color-danger-soft:   rgba(239, 68, 68, 0.12);
+    --color-danger-strong: var(--coral-400);
+
+    /* Récompense (réservé V3.x) */
+    --color-reward-soft:   rgba(234, 179, 8, 0.12);
+    --color-reward-strong: var(--gold-300);
+
+    /* Ombres */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.30);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 10px 30px -5px rgba(0, 0, 0, 0.45);
+    --shadow-success:   0 4px 16px rgba(16, 185, 129, 0.20);
+    --shadow-attention: 0 4px 16px rgba(249, 115, 22, 0.20);
+
+    /* Tints legacy (wizard / filter) */
+    --green-mid:  var(--emerald-400);
+    --orange-mid: var(--orange-300);
+    --red-mid:    var(--coral-400);
+
+    /* NB : les tokens --wiz-* sont définis dans wizard.css (clair + sombre). */
 }
 
-[data-theme="dark"] .card:hover    { background: #334155; }
-[data-theme="dark"] .badge-muted   { background: #334155; color: #cbd5e1; }
-[data-theme="dark"] .module-row    { background: #0f172a; }
-[data-theme="dark"] .module-row:focus-within { background: #1e293b; }
+[data-theme="dark"] .card:hover  { background: var(--surface-2); }
+[data-theme="dark"] .badge-muted { background: var(--surface-2); color: var(--text-secondary); }
+[data-theme="dark"] .module-row  { background: var(--bg-page); }
+[data-theme="dark"] .module-row:focus-within { background: var(--surface); }
+
+/* ================================================
+   ACCESSIBILITÉ — focus visible & mouvement réduit
+================================================ */
+:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

@@ -5,7 +5,15 @@
 
 const Planning = (() => {
 
+    // V3.4 — Barème du bonus d'objectif quotidien.
+    // Versé une fois par jour dont TOUTES les sessions prévues sont
+    // terminées. Métrique pure : recalculée depuis le plan, jamais stockée.
+    const XP_OBJECTIF_QUOTIDIEN = 25;
+
     return {
+
+        // Exposé pour l'UI et les tests (une seule source de vérité).
+        XP_OBJECTIF_QUOTIDIEN,
 
         // Convertit une Date en string YYYY-MM-DD
         toStr(date) {
@@ -273,6 +281,179 @@ const Planning = (() => {
             };
         },
 
+        // ── 5bis. STREAK V3.3 — continuité pure & déterministe ──
+        // Règle officielle (décision documentée) :
+        //   dailyGoal = nb sessions prévues ce jour (aucun seuil
+        //   configurable n'existe dans le modèle actuel).
+        //   jour réussi = ≥1 session prévue ET toutes terminées.
+        //   jour sans session = 'no-plan' : jamais réussi, neutre
+        //   pour la continuité (ne casse pas, n'augmente pas).
+        // Statuts: 'completed'|'incomplete'|'today'|'future'|'no-plan'|'failed'
+
+        statutJour(plan, dateStr, today) {
+            const ref = today || this.toStr(new Date());
+            const jour = Array.isArray(plan) ? plan.find(j => j && j.date === dateStr) : null;
+            const sessions = jour && Array.isArray(jour.sessions) ? jour.sessions : [];
+            if (sessions.length === 0) return 'no-plan';
+            const faites = sessions.filter(s => s && s.faite).length;
+            const termine = (faites === sessions.length);
+            if (dateStr === ref) return termine ? 'completed' : 'today';
+            if (dateStr > ref) return 'future';
+            return termine ? 'completed' : 'failed';
+        },
+
+        estJourObjectifAtteint(plan, dateStr, today) {
+            const ref = today || this.toStr(new Date());
+            return this.statutJour(plan, dateStr, ref) === 'completed';
+        },
+
+        // Vérifie si l'objectif quotidien d'une journée est atteint (V3.4 §1)
+        // 1. Récupère les sessions prévues pour dateStr
+        // 2. Vérifie qu'il existe au moins une session
+        // 3. Vérifie que toutes les sessions sont terminées
+        // 4. Retourne strictement un booléen
+        estObjectifQuotidienAtteint(plan, dateStr) {
+            if (!Array.isArray(plan) || !dateStr) return false;
+            const jour = plan.find(j => j && j.date === dateStr);
+            const sessions = jour && Array.isArray(jour.sessions) ? jour.sessions : [];
+            if (sessions.length === 0) return false;
+            return sessions.every(s => s && Boolean(s.faite));
+        },
+
+        // Détail d'un jour : todayProgress / todayGoal (V3.3 §3)
+        detailJour(plan, dateStr) {
+            const jour = Array.isArray(plan) ? plan.find(j => j && j.date === dateStr) : null;
+            const sessions = jour && Array.isArray(jour.sessions) ? jour.sessions : [];
+            const faites = sessions.filter(s => s && s.faite).length;
+            return {
+                date: dateStr,
+                total: sessions.length,
+                faites,
+                termine: sessions.length > 0 && faites === sessions.length
+            };
+        },
+
+        // Streak courante : consécutifs réussis en remontant depuis today.
+        // today completed → compté (Cas B) ; today incomplet → stop (Cas A/C).
+        // 'no-plan'/'future' neutres (sautés, Cas F) ; 'failed' → stop (Cas D).
+        calculerStreak(plan, today) {
+            const ref = today || this.toStr(new Date());
+            if (!Array.isArray(plan) || plan.length === 0) return 0;
+            let streak = 0;
+            const cur = new Date(ref + 'T12:00:00');
+            if (isNaN(cur.getTime())) return 0;
+            for (let i = 0; i < 1826; i++) {
+                const str = this.toStr(cur);
+                const st = this.statutJour(plan, str, ref);
+                if (st === 'completed') { streak++; }
+                else if (st === 'no-plan' || st === 'future') { /* neutre */ }
+                else if (str === ref) { /* today incomplet (Cas A/C) : non compté, on remonte */ }
+                else { break; }
+                cur.setDate(cur.getDate() - 1);
+            }
+            return streak;
+        },
+
+        // Record : plus longue séquence de 'completed' (no-plan neutre).
+        calculerRecordStreak(plan, today) {
+            const ref = today || this.toStr(new Date());
+            if (!Array.isArray(plan) || plan.length === 0) return 0;
+            const dates = [...new Set(plan.map(j => j && j.date).filter(Boolean))]
+                .filter(d => d <= ref).sort();
+            let record = 0, courant = 0;
+            for (const d of dates) {
+                const st = this.statutJour(plan, d, ref);
+                if (st === 'completed') { courant++; if (courant > record) record = courant; }
+                else if (st === 'no-plan' || st === 'today') { /* neutre */ }
+                else { courant = 0; }
+            }
+            return record;
+        },
+
+        // Semaine Lun→Dim (7 jours max).
+        calculerProgressionSemaine(plan, today) {
+            const ref = today || this.toStr(new Date());
+            const refDate = new Date(ref + 'T12:00:00');
+            const dow = (refDate.getDay() + 6) % 7;
+            const lundi = new Date(refDate);
+            lundi.setDate(refDate.getDate() - dow);
+            const sem = [];
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(lundi);
+                d.setDate(lundi.getDate() + i);
+                const str = this.toStr(d);
+                sem.push({ date: str, status: this.statutJour(plan, str, ref) });
+            }
+            return sem;
+        },
+
+        // Objet streak complet V3.3 §3.
+        calculerStreakDetail(plan, today) {
+            const ref = today || this.toStr(new Date());
+            const det = this.detailJour(plan, ref);
+            return {
+                current: this.calculerStreak(plan, ref),
+                record: this.calculerRecordStreak(plan, ref),
+                todayCompleted: det.termine,
+                todayProgress: det.faites,
+                todayGoal: det.total,
+                week: this.calculerProgressionSemaine(plan, ref)
+            };
+        },
+
+        // FIN-BLOC-A
+        calculerXPSession(session) {
+            if (!session || !session.faite) return 0;
+            let xp = 10; // Session terminée : +10 XP
+            if (session.bilan && session.bilan.maitrise) {
+                const valides = ['facile', 'moyen', 'a-revoir'];
+                if (valides.includes(session.bilan.maitrise)) {
+                    xp += 15; // Bilan complété avec niveau de maîtrise : +15 XP
+                }
+                if (session.bilan.note && String(session.bilan.note).trim().length > 0) {
+                    xp += 5; // Note de bilan non vide : +5 XP
+                }
+            }
+            return xp;
+        },
+
+        // Calcul pur de l'XP global et journalier (V3.2)
+        // V3.4 : intègre le bonus d'objectif quotidien (+25 XP par jour
+        // dont toutes les sessions prévues sont terminées). Purement
+        // dérivé du plan → idempotent, aucun stockage supplémentaire.
+        calculerXP(plan, today) {
+            if (!Array.isArray(plan)) {
+                return { xpTotal: 0, xpAujourdhui: 0, xpObjectifsQuotidiens: 0, objectifsAtteints: 0 };
+            }
+            const dateRef = today || this.toStr(new Date());
+            let xpTotal = 0;
+            let xpAujourdhui = 0;
+            let objectifsAtteints = 0;
+
+            for (const jour of plan) {
+                if (!jour || !Array.isArray(jour.sessions)) continue;
+                const isToday = (jour.date === dateRef);
+                for (const s of jour.sessions) {
+                    const sessionXp = this.calculerXPSession(s);
+                    xpTotal += sessionXp;
+                    if (isToday) xpAujourdhui += sessionXp;
+                }
+                // Bonus d'objectif (V3.4) : détecté sur le plan historique.
+                if (this.estObjectifQuotidienAtteint(plan, jour.date)) {
+                    objectifsAtteints++;
+                    xpTotal += XP_OBJECTIF_QUOTIDIEN;
+                    if (isToday) xpAujourdhui += XP_OBJECTIF_QUOTIDIEN;
+                }
+            }
+
+            return {
+                xpTotal,
+                xpAujourdhui,
+                xpObjectifsQuotidiens: objectifsAtteints * XP_OBJECTIF_QUOTIDIEN,
+                objectifsAtteints
+            };
+        },
+
         // Stats globales du planning
         calculerStats(plan, modules, backlog = []) {
             const today = this.toStr(new Date());
@@ -291,15 +472,11 @@ const Planning = (() => {
                   ))
                 : 0;
 
-            // Streak
+            // Streak V3.3 — délégué à la métrique pure (neutre no-plan,
+            // today incomplet non compté mais ne casse pas : on compte
+            // les jours précédents réellement réussis).
             let streak = 0;
-            const sorted = [...plan]
-                .filter(j => j.date <= today && j.sessions.length)
-                .sort((a, b) => b.date.localeCompare(a.date));
-            for (const j of sorted) {
-                if (j.sessions.every(s => s.faite)) streak++;
-                else break;
-            }
+            try { streak = this.calculerStreak(plan, today); } catch (e) { streak = 0; }
 
             // Vélocité sur 3 jours
             const il2j = new Date();
@@ -311,13 +488,19 @@ const Planning = (() => {
                 .forEach(j => j.sessions.forEach(s => { if (s.faite) sessRec++; }));
             const velocite = +(sessRec / 3).toFixed(1);
 
+            const { xpTotal, xpAujourdhui, xpObjectifsQuotidiens, objectifsAtteints } = this.calculerXP(plan, today);
+
             return {
                 totalSessions: totalSessions,
                 sessionsFaites: faits,
                 pourcentage,
                 joursRestants,
                 streak,
-                velocite
+                velocite,
+                xpTotal,
+                xpAujourdhui,
+                xpObjectifsQuotidiens,
+                objectifsAtteints
             };
         }
     };

@@ -7,10 +7,11 @@ const Pomodoro = (() => {
 
     // ---- Constantes ----
     const CIRCONFERENCE = 326.7; // 2 * PI * 52
+    // Couleurs des modes : tokens du Design System V3 (core/variables.css)
     const MODES = {
-        travail: { duree: 25 * 60, label: 'TRAVAIL',  couleur: '#2D9E6B' },
-        pause:   { duree:  5 * 60, label: 'PAUSE',    couleur: '#E8730A' },
-        longue:  { duree: 15 * 60, label: 'LONGUE PAUSE', couleur: '#3B82F6' }
+        travail: { duree: 25 * 60, label: 'TRAVAIL',      couleur: 'var(--color-primary)' },
+        pause:   { duree:  5 * 60, label: 'PAUSE',        couleur: 'var(--color-success)' },
+        longue:  { duree: 15 * 60, label: 'LONGUE PAUSE', couleur: 'var(--color-amber)' }
     };
 
     // ---- État interne ----
@@ -99,6 +100,11 @@ const Pomodoro = (() => {
         const s   = _tempsRestant % 60;
         const txt = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 
+        // Nouveau Focus Card display
+        const focusDigits = document.getElementById('focus-timer-digits');
+        if (focusDigits) focusDigits.textContent = txt;
+
+        // Legacy / Background elements
         const elTemps = document.getElementById('pomo-time');
         const elArc   = document.getElementById('pomo-arc');
         const elMode  = document.getElementById('pomo-mode');
@@ -112,8 +118,8 @@ const Pomodoro = (() => {
             const offset = CIRCONFERENCE * (1 - ratio);
             elArc.style.strokeDashoffset = offset;
 
-            // Changer la couleur du cercle selon le mode
-            const couleur = MODES[_modeCourant]?.couleur || '#2D9E6B';
+            // Changer la couleur du cercle selon le mode (token du Design System)
+            const couleur = MODES[_modeCourant]?.couleur || 'var(--color-primary)';
             elArc.style.stroke = couleur;
         }
 
@@ -150,21 +156,19 @@ const Pomodoro = (() => {
             _sessionsPomo++;
 
             const el = document.getElementById('pomo-sess-count');
-            if (el) {
+            if (el && typeof UI !== 'undefined') {
                 UI.animerNombre(el, _sessionsAuj - 1, _sessionsAuj, 400);
                 UI.pulse(el);
             }
 
             _jouerSon('fin');
-            UI.toast('Session terminée ! Prends une pause.', 'success');
-
-            // Proposer de marquer une session comme faite
-            _proposerValidationSession();
+            if (typeof UI !== 'undefined') {
+                UI.toast('Session Pomodoro terminée ! Prends une pause bien méritée.', 'success');
+            }
 
             // Toutes les 4 sessions → longue pause
             if (_sessionsPomo % 4 === 0) {
                 _changerMode('longue');
-                UI.toast('4 sessions complétées — longue pause méritée !', 'info');
             } else {
                 _changerMode('pause');
             }
@@ -172,59 +176,46 @@ const Pomodoro = (() => {
         } else {
             // Fin de pause → revenir en mode travail
             _jouerSon('pause');
-            UI.toast('Pause terminée. Au travail !', 'info');
+            if (typeof UI !== 'undefined') {
+                UI.toast('Pause terminée. C\'est reparti pour une session !', 'info');
+            }
             _changerMode('travail');
         }
 
         _mettreAJourBouton();
     }
 
-    // ---- Interaction avec le planning ----
-    function _proposerValidationSession() {
-        if (typeof State === 'undefined' || typeof Planning === 'undefined' || typeof Dashboard === 'undefined') return;
-
-        const state = State.get();
-        const today = Planning.toStr(new Date());
-        const jourPlan = state.plan.find(j => j.date === today);
-        
-        if (!jourPlan || !jourPlan.sessions.length) return;
-        
-        const sessionsAFaire = jourPlan.sessions.filter(s => !s.faite);
-        if (sessionsAFaire.length === 0) return;
-
-        // On prend la première session non faite (la plus prioritaire)
-        const session = sessionsAFaire[0];
-        const mod = state.modules.find(m => m.id === session.moduleId);
-
-        UI.confirmer(
-            `Excellent travail ! Souhaites-tu marquer la session de "${UI.echapperHTML(mod?.nom || 'Module')}" comme terminée ?`,
-            () => {
-                Dashboard.toggleSession(today, session.moduleId, session.id);
-            },
-            null,
-            { oui: 'Oui, valider', non: 'Pas encore' }
-        );
-    }
-
     // ---- Mise à jour du bouton play/pause ----
     function _mettreAJourBouton() {
+        // Nouveau bouton Focus
+        const focusToggleBtn = document.getElementById('btn-focus-timer-toggle');
+        if (focusToggleBtn) {
+            const span = focusToggleBtn.querySelector('span') || focusToggleBtn;
+            span.textContent = _enCours ? 'Pause' : 'Démarrer';
+        }
+
+        // Legacy bouton
         const btn   = document.getElementById('btn-pomo-play');
         const icone = document.getElementById('pomo-play-icon');
         const wrap  = document.querySelector('.pomo-ring-wrap');
-        if (!btn || !icone) return;
-
-        if (_enCours) {
-            if (wrap) wrap.classList.add('running');
-            icone.innerHTML = `<rect x="6" y="4" width="4" height="16"/>
-                               <rect x="14" y="4" width="4" height="16"/>`;
-            btn.childNodes.forEach(n => {
-                if (n.nodeType === 3) n.textContent = ' Pause';
-            });
-        } else {
-            icone.innerHTML = `<polygon points="5 3 19 12 5 21 5 3"/>`;
-            btn.childNodes.forEach(n => {
-                if (n.nodeType === 3) n.textContent = ' Démarrer';
-            });
+        if (btn && icone) {
+            if (_enCours) {
+                if (wrap) wrap.classList.add('running');
+                icone.innerHTML = `<rect x="6" y="4" width="4" height="16"/>
+                                   <rect x="14" y="4" width="4" height="16"/>`;
+                if (btn.childNodes && typeof btn.childNodes.forEach === 'function') {
+                    btn.childNodes.forEach(n => {
+                        if (n.nodeType === 3) n.textContent = ' Pause';
+                    });
+                }
+            } else {
+                icone.innerHTML = `<polygon points="5 3 19 12 5 21 5 3"/>`;
+                if (btn.childNodes && typeof btn.childNodes.forEach === 'function') {
+                    btn.childNodes.forEach(n => {
+                        if (n.nodeType === 3) n.textContent = ' Démarrer';
+                    });
+                }
+            }
         }
     }
 
@@ -234,10 +225,10 @@ const Pomodoro = (() => {
         if (!elTemps) return;
 
         if (_tempsRestant <= 10 && _modeCourant === 'travail') {
-            elTemps.style.color     = 'var(--red)';
+            elTemps.style.color     = 'var(--color-danger)';
             elTemps.style.animation = 'pulseCritique 0.8s ease infinite';
         } else {
-            elTemps.style.color     = 'var(--text)';
+            elTemps.style.color     = 'var(--text-primary)';
             elTemps.style.animation = '';
         }
     }
@@ -326,18 +317,8 @@ const Pomodoro = (() => {
                 );
             });
 
-            // Injecter le style pulseCritique si pas encore présent
-            if (!document.getElementById('pomo-styles')) {
-                const style = document.createElement('style');
-                style.id = 'pomo-styles';
-                style.textContent = `
-                    @keyframes pulseCritique {
-                        0%, 100% { opacity: 1; transform: scale(1); }
-                        50%       { opacity: 0.5; transform: scale(1.05); }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
+            // NB : les @keyframes (pulseCritique, pulse, fadeUp, …) sont définis
+            // une seule fois dans core/variables.css — plus d'injection en JS.
         },
 
         // Démarrer ou mettre en pause
@@ -389,7 +370,7 @@ const Pomodoro = (() => {
 
             const elTemps = document.getElementById('pomo-time');
             if (elTemps) {
-                elTemps.style.color     = 'var(--text)';
+                elTemps.style.color     = 'var(--text-primary)';
                 elTemps.style.animation = '';
             }
 

@@ -196,7 +196,7 @@ const Wizard = (() => {
         },
 
         ajouterModule() {
-            const palette = State.getKey('palette') || ['#2D9E6B', '#E8730A', '#3B82F6', '#8B5CF6'];
+            const palette = State.getKey('palette') || ['#4F46E5', '#10B981', '#F97316', '#8B5CF6'];
             const newId = genId();
             const mod = {
                 id: newId,

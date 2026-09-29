@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RevisionFlow — Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg?v=7">
+    <title>RevisionFlow — Focus Board</title>
     <script>
         (function () {
             try {
@@ -18,367 +19,453 @@
         })();
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800;12..96,900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../core/variables.css">
-    <link rel="stylesheet" href="../filter/filter.css">
-    <link rel="stylesheet" href="dashboard.css">
-    <link rel="stylesheet" href="../pomodoro/pomodoro.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../core/variables.css?v=7">
+    <link rel="stylesheet" href="dashboard.css?v=7">
+    <style>
+        .hidden { display: none !important; }
+    </style>
 </head>
 <body>
 
-<div id="toast-container"></div>
+    <div id="toast-container"></div>
 
-<div class="dash-layout" id="dash-layout">
+    <div class="app-layout">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sb-top">
+        <!-- =========================================================
+             1. TOPBAR MINIMALISTE
+             ========================================================= -->
+        <header class="app-topbar">
+            <div class="topbar-inner">
+                <a href="../../landing/index.html" class="topbar-brand">
+                    <div class="brand-badge">⚡</div>
+                    <span class="brand-text">Revision<span>Flow</span></span>
+                </a>
 
-            <a href="../../landing/index.html" class="sb-brand">
-                <div class="sb-logo">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
-                        <path d="M9 11l3 3L22 4"/>
-                        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
-                    </svg>
-                </div>
-                <span class="sb-brand-name">Revision<span>Flow</span></span>
-            </a>
-
-            <div class="sb-exam-card" id="sb-exam-card">
-                <div class="sb-exam-tag">Prochain examen</div>
-                <div class="countdown-val" id="countdown-val">—</div>
-                <div class="sb-exam-module" id="sb-exam-module"></div>
-                <div class="sb-exam-nom" id="sb-exam-nom">—</div>
-            </div>
-
-            <nav class="sb-nav">
-                <button class="sb-nav-btn active" id="nav-aujourdhui">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                    <span>Aujourd'hui</span>
-                </button>
-                <button class="sb-nav-btn" id="nav-modules">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-                    <span>Modules</span>
-                </button>
-                <button class="sb-nav-btn" id="nav-calendrier">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    <span>Calendrier</span>
-                </button>
-                <button class="sb-nav-btn" id="nav-historique">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    <span>Historique</span>
-                </button>
-            </nav>
-
-            <div class="sb-pomo">
-                <div class="sb-pomo-header">
-                    <span class="sb-pomo-label">Timer Focus</span>
-                    <span class="sb-pomo-mode-badge" id="sb-pomo-mode">TRAVAIL</span>
-                </div>
-                <div class="sb-pomo-body">
-                    <span class="sb-pomo-time" id="pomo-time">25:00</span>
-                    <div class="sb-pomo-btns">
-                        <button class="sb-pomo-btn" id="btn-pomo-toggle" aria-label="Démarrer / Pause">
-                            <svg id="sb-pomo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="14" height="14"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                        </button>
-                        <button class="sb-pomo-btn" id="btn-pomo-reset" aria-label="Réinitialiser">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="14" height="14"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sb-streak" id="sb-streak"></div>
-        </div>
-
-        <div class="sb-bottom">
-            <button class="sb-nav-btn" id="nav-settings">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-                <span>Réglages</span>
-            </button>
-        </div>
-    </aside>
-
-    <!-- MAIN -->
-    <main class="dash-main" id="dash-main">
-
-        <div class="mobile-header">
-            <button class="mobile-menu-btn" id="btn-toggle-sidebar" aria-label="Ouvrir le menu">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="20" height="20"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-            </button>
-            <span class="mobile-brand">RevisionFlow</span>
-            <div class="mobile-countdown" id="mobile-countdown">—</div>
-        </div>
-
-        <!-- ===== TAB AUJOURD'HUI ===== -->
-        <div class="dash-tab active" id="tab-aujourdhui">
-
-            <div class="today-stats-bar">
-                <div class="today-stat today-stat-sessions">
-                    <div class="today-stat-val" id="stat-sessions">0/0</div>
-                    <div class="today-stat-lbl">Sessions du jour</div>
-                    <div class="today-prog-track" aria-hidden="true">
-                        <div class="today-prog-fill" id="today-prog-fill"></div>
-                    </div>
-                </div>
-                <div class="today-stat today-stat-global">
-                    <div class="today-stat-val" id="stat-global">0%</div>
-                    <div class="today-stat-lbl">Progression globale</div>
-                </div>
-                <div class="today-stat today-stat-streak">
-                    <div class="today-stat-val" id="stat-streak">0j</div>
-                    <div class="today-stat-lbl">Streak</div>
-                </div>
-                <div class="today-stat today-stat-exam">
-                    <div class="today-stat-val" id="stat-jours">—</div>
-                    <div class="today-stat-lbl">Prochain exam</div>
-                </div>
-            </div>
-
-            <div id="backlog-alert" class="backlog-alert hidden"></div>
-            <div id="filters-container" class="filters-container"></div>
-
-            <div class="today-content-row">
-                <!-- Colonne gauche : sessions -->
-                <div>
-                    <div class="today-date-title" id="today-titre"></div>
-                    <div class="today-date-sub"   id="today-subtitle"></div>
-                    <div class="sessions-list-large" id="sessions-list"></div>
-                    <button class="btn-anticiper" id="btn-anticiper">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15">
-                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                        </svg>
-                        Avancer une session depuis demain
+                <!-- Navigation Principale -->
+                <nav class="topbar-nav" aria-label="Navigation principale">
+                    <button class="nav-item active" id="nav-aujourdhui" type="button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span>Focus du jour</span>
                     </button>
-                </div>
+                    <button class="nav-item" id="nav-calendrier" type="button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        <span>Calendrier</span>
+                    </button>
+                    <button class="nav-item" id="nav-modules" type="button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                        <span>Modules</span>
+                    </button>
+                    <button class="nav-item" id="nav-historique" type="button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+                        <span>Historique</span>
+                    </button>
+                    <button class="nav-item" id="nav-settings" type="button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                        <span>Paramètres</span>
+                    </button>
+                </nav>
 
-                <!-- Colonne droite : anneau + prochains jours -->
-                <div>
-                    <div class="prog-card">
-                        <div class="prog-card-title">Progression du jour</div>
-                        <div class="prog-ring-area">
-                            <div class="prog-ring-wrap">
-                                <svg width="110" height="110" viewBox="0 0 110 110">
-                                    <circle class="ring-track" cx="55" cy="55" r="44" fill="none" stroke-width="8"/>
-                                    <circle class="ring-fill" id="ring-fill" cx="55" cy="55" r="44"
-                                        fill="none" stroke="#2D9E6B" stroke-width="8"
-                                        stroke-linecap="round"
-                                        stroke-dasharray="276.5" stroke-dashoffset="276.5"/>
-                                </svg>
-                                <div class="prog-ring-label">
-                                    <span class="prog-ring-pct" id="ring-pct">0%</span>
-                                    <span class="prog-ring-sub">aujourd'hui</span>
-                                </div>
-                            </div>
-                            <div class="prog-counts">
-                                <div class="prog-count-item">
-                                    <div class="prog-count-val" id="prog-done">0</div>
-                                    <div class="prog-count-lbl">faites</div>
-                                </div>
-                                <div class="prog-count-item">
-                                    <div class="prog-count-val" id="prog-rest">0</div>
-                                    <div class="prog-count-lbl">restantes</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="next-days-card">
-                        <div class="next-days-title">Prochains jours</div>
-                        <div id="future-list" class="future-list"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ===== TAB CALENDRIER ===== -->
-        <div class="dash-tab" id="tab-calendrier">
-            <div class="card">
-                <div class="cal-dash-header">
-                    <div class="card-title">Vue calendrier</div>
-                    <div class="cal-legend-row">
-                        <span class="cal-leg todo">À faire</span>
-                        <span class="cal-leg done">Complété</span>
-                        <span class="cal-leg missed">Manqué</span>
-                        <span class="cal-leg off">Repos</span>
-                        <span class="cal-leg exam">Examen</span>
-                    </div>
-                </div>
-                <div id="cal-nav-row" class="cal-nav-row">
-                    <button class="cal-nav-btn" id="btn-cal-prev" aria-label="Mois précédent">‹</button>
-                    <span class="cal-mois-label" id="cal-mois-label"></span>
-                    <button class="cal-nav-btn" id="btn-cal-next" aria-label="Mois suivant">›</button>
-                </div>
-                <div id="cal-grille" class="cal-grille"></div>
-            </div>
-
-            <div class="cal-day-detail hidden" id="cal-day-detail">
-                <div class="cal-day-detail-header">
-                    <span class="cal-day-detail-date" id="cal-detail-date"></span>
-                    <button class="btn btn-ghost btn-sm" id="btn-close-detail">✕ Fermer</button>
-                </div>
-                <div id="cal-detail-sessions"></div>
-            </div>
-
-            <div class="card" style="margin-top:1.25rem">
-                <div class="card-title">Prochains examens</div>
-                <div id="prochains-examens"></div>
-            </div>
-        </div>
-
-        <!-- ===== TAB MODULES ===== -->
-        <div class="dash-tab" id="tab-modules">
-            <div class="card" style="margin-bottom:1.25rem">
-                <div class="card-title" style="margin-bottom:1rem">Mes modules</div>
-                <div id="modules-liste" class="modules-liste"></div>
-            </div>
-
-            <div class="card">
-                <div class="card-title" style="margin-bottom:1rem">Ajouter un module</div>
-                <div class="quick-add-grid">
-                    <div class="input-box">
-                        <input type="text" id="dash-mod-nom" placeholder="Nom du module">
-                    </div>
-                    <div class="input-box">
-                        <input type="date" id="dash-mod-date">
-                    </div>
-                    <div class="input-box">
-                        <select id="dash-mod-diff">
-                            <option value="1">Difficulté 1/5</option>
-                            <option value="2">Difficulté 2/5</option>
-                            <option value="3" selected>Difficulté 3/5</option>
-                            <option value="4">Difficulté 4/5</option>
-                            <option value="5">Difficulté 5/5</option>
-                        </select>
-                    </div>
-                    <div class="input-box">
-                        <input type="number" id="dash-mod-chap" placeholder="Nb chapitres" value="5" min="1">
-                    </div>
-                    <button class="btn btn-green" id="btn-add-mod-dash" style="width:100%">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        Ajouter
+                <!-- Actions Rapides Droite -->
+                <div class="topbar-actions">
+                    <button class="btn-theme-toggle" id="btn-toggle-theme" type="button" aria-label="Changer de thème">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
                     </button>
                 </div>
             </div>
-        </div>
+        </header>
 
-        <!-- ===== TAB RÉGLAGES ===== -->
-        <div class="dash-tab" id="tab-settings">
+        <!-- =========================================================
+             2. CORPS PRINCIPAL
+             ========================================================= -->
+        <main class="app-main-content">
 
-            <div class="card settings-section">
-                <div class="settings-section-title">Disponibilités</div>
-                <p class="settings-desc">Le planning se recalcule automatiquement après sauvegarde.</p>
-                <div class="settings-sliders">
-                    <div class="slider-row">
-                        <label for="set-h-soir">Soir en semaine</label>
-                        <div class="slider-wrap">
-                            <input type="range" id="set-h-soir" min="0" max="8" step="0.5">
-                            <span class="slider-val" id="lbl-soir">2h</span>
+            <!-- ================= TAB 1 : FOCUS DU JOUR ================= -->
+            <div class="dash-tab active" id="tab-aujourdhui">
+
+                <!-- Header de la journée -->
+                <section class="today-hero-header">
+                    <div class="hero-left">
+                        <div class="hero-greeting">Bonjour 👋</div>
+                        <h1 class="hero-main-title" id="today-hero-summary">Chargement de votre journée...</h1>
+                        <div class="hero-subtext">
+                            <span class="subtext-stat" id="stat-progress-text">0 / 0 sessions · 0% complété</span>
+                            <span class="subtext-dot">·</span>
+                            <span class="subtext-pill streak-pill" id="stat-streak-pill">🔥 0j de série</span>
+                            <span class="subtext-dot">·</span>
+                            <span class="subtext-pill goal-pill" id="stat-goal-pill" title="Terminez toutes les sessions du jour pour +25 XP">🎯 Objectif : 0 / 0</span>
+                            <span class="subtext-dot">·</span>
+                            <span class="subtext-pill xp-pill" id="stat-xp-pill">⚡ 0 XP aujourd'hui</span>
+                            <span class="subtext-dot">·</span>
+                            <span class="subtext-pill" id="stat-exam-pill">🎯 Prochain examen : —</span>
+                        </div>
+                        <div class="streak-week" id="streak-week" aria-label="Progression de la semaine"></div>
+                    </div>
+
+                    <div class="hero-actions">
+                        <div class="hero-actions-desktop">
+                            <button class="action-btn" id="btn-anticiper" type="button" title="Avancer une session de demain si vous êtes prêt">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                <span>Planifier demain</span>
+                            </button>
+                            <button class="action-btn" id="btn-jour-libre" type="button" title="Passe la journée en capacité libre pour rattraper du volume">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                                <span>Marquer la journée comme libre</span>
+                            </button>
+                        </div>
+                        <div class="hero-actions-mobile">
+                            <button class="action-btn-menu" id="btn-hero-menu" type="button" aria-label="Actions secondaires de la journée" aria-expanded="false" title="Actions de la journée">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                            </button>
+                            <div class="hero-menu-dropdown hidden" id="hero-menu-dropdown">
+                                <button class="ctx-option-item" id="btn-anticiper-m" type="button">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                    <span>Planifier demain</span>
+                                </button>
+                                <button class="ctx-option-item" id="btn-jour-libre-m" type="button">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                                    <span>Marquer jour libre</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="slider-row">
-                        <label for="set-h-weekend">Weekend</label>
-                        <div class="slider-wrap">
-                            <input type="range" id="set-h-weekend" min="0" max="12" step="0.5">
-                            <span class="slider-val" id="lbl-weekend">6h</span>
+                </section>
+
+                <!-- Alerte Surcharge / Backlog -->
+                <div id="backlog-alert" class="backlog-banner hidden"></div>
+
+                <!-- ================= FOCUS BOARD (3 COLONNES) ================= -->
+                <div class="focus-board-grid">
+
+                    <!-- COLONNE 1 : À FAIRE -->
+                    <div class="board-column col-todo">
+                        <div class="col-header">
+                            <div class="col-title-wrap">
+                                <span class="col-status-dot todo"></span>
+                                <h2 class="col-title">À faire</h2>
+                            </div>
+                            <span class="col-counter" id="count-todo">0</span>
+                        </div>
+
+                        <div class="board-card-list" id="col-todo-list">
+                            <!-- Rendu dynamique via DashboardView -->
                         </div>
                     </div>
-                    <div class="slider-row">
-                        <label for="set-h-session">Durée d'une session</label>
-                        <div class="slider-wrap">
-                            <input type="range" id="set-h-session" min="0.25" max="4" step="0.25">
-                            <span class="slider-val" id="lbl-session">1h</span>
+
+                    <!-- COLONNE 2 : FOCUS ACTUEL (CENTRALE & PROÉMINENTE) -->
+                    <div class="board-column col-focus">
+                        <div class="col-header">
+                            <div class="col-title-wrap">
+                                <span class="col-status-dot active pulse"></span>
+                                <h2 class="col-title">Focus actuel</h2>
+                            </div>
+                            <span class="col-tag-live">En cours</span>
+                        </div>
+
+                        <div class="focus-active-container" id="col-focus-container">
+                            <!-- Rendu dynamique du Focus Actif ou État Vide -->
+                        </div>
+                    </div>
+
+                    <!-- COLONNE 3 : TERMINÉES -->
+                    <div class="board-column col-done">
+                        <div class="col-header">
+                            <div class="col-title-wrap">
+                                <span class="col-status-dot done"></span>
+                                <h2 class="col-title">Terminées</h2>
+                            </div>
+                            <span class="col-counter" id="count-done">0</span>
+                        </div>
+
+                        <div class="board-card-list" id="col-done-list">
+                            <!-- Rendu dynamique via DashboardView -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ================= TAB 2 : CALENDRIER ================= -->
+            <div class="dash-tab" id="tab-calendrier">
+                <section class="section-page-header">
+                    <div>
+                        <h1 class="page-main-heading">Calendrier des Révisions</h1>
+                        <p class="page-sub-heading">Visualisez vos échéances et la répartition de vos journées d'étude.</p>
+                    </div>
+                </section>
+
+                <div class="minimal-calendar-card">
+                    <div class="cal-nav-toolbar">
+                        <div class="cal-nav-buttons">
+                            <button class="btn-cal-arrow" id="btn-cal-prev" type="button" aria-label="Mois précédent">‹</button>
+                            <span class="cal-title-month" id="cal-mois-label">Mois</span>
+                            <button class="btn-cal-arrow" id="btn-cal-next" type="button" aria-label="Mois suivant">›</button>
+                        </div>
+
+                        <div class="cal-legend-row">
+                            <span class="cal-pill-tag todo">À réviser</span>
+                            <span class="cal-pill-tag done">Complété</span>
+                            <span class="cal-pill-tag missed">Manqué</span>
+                            <span class="cal-pill-tag off">Repos</span>
+                            <span class="cal-pill-tag exam">Examen</span>
+                        </div>
+                    </div>
+
+                    <div class="calendar-grid" id="cal-grille"></div>
+
+                    <!-- Détail de la journée sélectionnée -->
+                    <div class="day-detail-drawer hidden" id="cal-day-detail">
+                        <div class="drawer-head">
+                            <span class="drawer-date-title" id="cal-detail-date">Détail de la journée</span>
+                            <button class="drawer-close-btn" id="btn-close-detail" type="button">✕ Fermer</button>
+                        </div>
+                        <div class="drawer-sessions-list" id="cal-detail-sessions"></div>
+                    </div>
+                </div>
+
+                <div class="upcoming-exams-box">
+                    <h3 class="exams-box-title">Dates des Examens</h3>
+                    <div id="prochains-examens" class="exams-clean-list"></div>
+                </div>
+            </div>
+
+            <!-- ================= TAB 3 : MODULES ================= -->
+            <div class="dash-tab" id="tab-modules">
+                <section class="section-page-header">
+                    <div>
+                        <h1 class="page-main-heading">Matières & Volumes</h1>
+                        <p class="page-sub-heading">Progression détaillée, dates d'épreuves et gestion de vos modules.</p>
+                    </div>
+                </section>
+
+                <div class="modules-page-layout">
+                    <div class="modules-clean-grid" id="modules-liste"></div>
+
+                    <!-- Formulaire d'ajout rapide -->
+                    <div class="add-module-clean-card">
+                        <h3 class="add-card-heading">Ajouter une nouvelle matière</h3>
+                        <div class="add-module-form">
+                            <div class="field-item">
+                                <label for="dash-mod-nom">Nom du module</label>
+                                <input type="text" id="dash-mod-nom" class="clean-input" placeholder="ex: Analyse Mathématique">
+                            </div>
+                            <div class="field-item">
+                                <label for="dash-mod-date">Date de l'examen</label>
+                                <input type="date" id="dash-mod-date" class="clean-input">
+                            </div>
+                            <div class="field-item">
+                                <label for="dash-mod-diff">Difficulté estimée</label>
+                                <select id="dash-mod-diff" class="clean-input">
+                                    <option value="1">⭐ 1/5 — Facile</option>
+                                    <option value="2">⭐⭐ 2/5 — Modéré</option>
+                                    <option value="3" selected>⭐⭐⭐ 3/5 — Standard</option>
+                                    <option value="4">⭐⭐⭐⭐ 4/5 — Difficile</option>
+                                    <option value="5">⭐⭐⭐⭐⭐ 5/5 — Très exigeant</option>
+                                </select>
+                            </div>
+                            <div class="field-item">
+                                <label for="dash-mod-chap">Nombre de sessions nécessaires</label>
+                                <input type="number" id="dash-mod-chap" class="clean-input" value="5" min="1" max="50">
+                            </div>
+                            <button class="btn-submit-module" id="btn-add-mod-dash" type="button">
+                                <span>Ajouter la matière</span>
+                            </button>
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-green" id="btn-save-settings" style="margin-top:1.5rem">Sauvegarder</button>
             </div>
 
-            <div class="card settings-section">
-                <div class="settings-section-title">Apparence</div>
-                <button class="btn btn-ghost" id="btn-toggle-theme" style="width:100%; justify-content:space-between;">
-                    <span>Mode Sombre / Clair</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                </button>
-            </div>
+            <!-- ================= TAB 4 : PARAMÈTRES ================= -->
+            <div class="dash-tab" id="tab-settings">
+                <section class="section-page-header">
+                    <div>
+                        <h1 class="page-main-heading">Paramètres & Rythme</h1>
+                        <p class="page-sub-heading">Ajustez vos disponibilités et vos options de révision.</p>
+                    </div>
+                </section>
 
-            <div class="card settings-section">
-                <div class="settings-section-title">Pays & Données</div>
-                <div class="wiz-field" style="margin-bottom:1rem">
-                    <label class="wiz-label" for="sb-pays-select">Pays (jours fériés)</label>
-                    <div class="input-box">
-                        <select id="sb-pays-select"></select>
+                <div class="settings-clean-container">
+                    <div class="settings-section-card">
+                        <h3 class="settings-title">Capacité de révision</h3>
+                        <p class="settings-desc">Le moteur glouton recalcule le planning futur dès que vous enregistrez.</p>
+
+                        <div class="sliders-clean-list">
+                            <div class="slider-clean-row">
+                                <div class="slider-clean-labels">
+                                    <label for="set-h-soir">Heures le soir en semaine</label>
+                                    <span class="slider-badge" id="lbl-soir">2h</span>
+                                </div>
+                                <input type="range" id="set-h-soir" class="slider-input" min="0" max="8" step="0.5">
+                            </div>
+
+                            <div class="slider-clean-row">
+                                <div class="slider-clean-labels">
+                                    <label for="set-h-weekend">Heures le week-end & jours libres</label>
+                                    <span class="slider-badge" id="lbl-weekend">6h</span>
+                                </div>
+                                <input type="range" id="set-h-weekend" class="slider-input" min="0" max="12" step="0.5">
+                            </div>
+
+                            <div class="slider-clean-row">
+                                <div class="slider-clean-labels">
+                                    <label for="set-h-session">Durée standard d'une session</label>
+                                    <span class="slider-badge" id="lbl-session">1h</span>
+                                </div>
+                                <input type="range" id="set-h-session" class="slider-input" min="0.25" max="4" step="0.25">
+                            </div>
+                        </div>
+
+                        <button class="btn-save-primary" id="btn-save-settings" type="button">
+                            Enregistrer les disponibilités
+                        </button>
+                    </div>
+
+                    <div class="settings-section-card">
+                        <h3 class="settings-title">Région & Jours Fériés</h3>
+                        <div class="field-item">
+                            <label for="sb-pays-select">Pays de calendrier scolaire</label>
+                            <select id="sb-pays-select" class="clean-input"></select>
+                        </div>
+                    </div>
+
+                    <div class="settings-section-card">
+                        <h3 class="settings-title">Sauvegarde & Transfert</h3>
+                        <p class="settings-desc">Toutes vos données restent privées et stockées dans votre navigateur.</p>
+                        <div class="data-buttons-row">
+                            <button class="btn-clean-secondary" id="btn-export" type="button">
+                                <span>Exporter JSON</span>
+                            </button>
+                            <button class="btn-clean-secondary" id="btn-import-trigger" type="button">
+                                <span>Importer JSON</span>
+                            </button>
+                            <input type="file" id="import-input" accept=".json" style="display:none">
+                        </div>
+                    </div>
+
+                    <div class="settings-section-card danger-card">
+                        <h3 class="danger-title">Réinitialisation</h3>
+                        <p class="settings-desc">Supprime toutes vos données de révision et repart à zéro.</p>
+                        <button class="btn-clean-danger" id="btn-reinit" type="button">
+                            Réinitialiser tout le planning
+                        </button>
                     </div>
                 </div>
-                <div class="settings-data-row">
-                    <span class="settings-data-info" id="settings-data-info">Données locales</span>
-                    <div style="display:flex;gap:8px">
-                        <button class="btn btn-ghost btn-sm" id="btn-export">Exporter</button>
-                        <button class="btn btn-ghost btn-sm" id="btn-import-trigger">Importer</button>
-                    </div>
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- =========================================================
+         3. MODALES ET MENUS CONTEXTUELS
+         ========================================================= -->
+
+    <!-- Menu Contextuel Session -->
+    <div class="session-menu-dropdown hidden" id="session-ctx-menu">
+        <button class="ctx-option-item" id="ctx-reporter" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            <span>Reporter à plus tard</span>
+        </button>
+        <button class="ctx-option-item" id="ctx-note" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            <span>Modifier la note</span>
+        </button>
+    </div>
+
+    <!-- Modal Bilan Rapide Post-Session -->
+    <div class="modal-backdrop hidden" id="modal-bilan" role="dialog" aria-modal="true" aria-labelledby="modal-bilan-title">
+        <div class="modal-dialog-clean modal-bilan-dialog">
+            <div class="modal-bilan-head">
+                <h3 class="modal-heading" id="modal-bilan-title">Session terminée ✓</h3>
+                <div class="modal-sub-heading" id="modal-bilan-subtitle">Module</div>
+            </div>
+
+            <!-- Ce que tu retiens -->
+            <div class="bilan-field-group">
+                <label class="bilan-field-label" for="modal-bilan-note">Ce que tu retiens</label>
+                <textarea id="modal-bilan-note" class="modal-textarea-clean bilan-textarea"
+                          placeholder="Qu'est-ce que tu retiens de cette session ?"></textarea>
+            </div>
+
+            <!-- Niveau de maîtrise -->
+            <div class="bilan-field-group">
+                <label class="bilan-field-label" id="label-maitrise-group">Niveau de maîtrise</label>
+                <div class="bilan-maitrise-group" role="radiogroup" aria-labelledby="label-maitrise-group" id="bilan-maitrise-options">
+                    <button class="maitrise-btn" type="button" data-level="facile" role="radio" aria-checked="false">
+                        <span class="maitrise-dot">🟢</span>
+                        <span class="maitrise-label">Facile</span>
+                    </button>
+                    <button class="maitrise-btn" type="button" data-level="moyen" role="radio" aria-checked="false">
+                        <span class="maitrise-dot">🟡</span>
+                        <span class="maitrise-label">Moyen</span>
+                    </button>
+                    <button class="maitrise-btn" type="button" data-level="a-revoir" role="radio" aria-checked="false">
+                        <span class="maitrise-dot">🔴</span>
+                        <span class="maitrise-label">À revoir</span>
+                    </button>
                 </div>
-                <input type="file" id="import-input" accept=".json" style="display:none">
             </div>
 
-            <div class="card settings-section danger-zone">
-                <div class="settings-section-title danger-title">Zone de danger</div>
-                <p class="settings-desc">Supprime toutes tes données de révision. Action irréversible.</p>
-                <button class="btn btn-danger" id="btn-reinit">Réinitialiser tout le planning</button>
+            <!-- Actions -->
+            <div class="modal-btn-row">
+                <button class="btn-clean-secondary" id="btn-bilan-passer" type="button">Passer</button>
+                <button class="btn-save-primary" id="btn-bilan-sauv" type="button" disabled>Enregistrer le bilan</button>
             </div>
-        </div>
-
-    </main>
-</div>
-
-<!-- MODAL NOTE -->
-<div class="modal-overlay hidden" id="modal-note">
-    <div class="modal-box">
-        <div class="modal-title" id="modal-note-titre">Note</div>
-        <textarea class="modal-note-area" id="modal-note-area" placeholder="Tes remarques..."></textarea>
-        <div class="modal-foot">
-            <button class="btn btn-ghost btn-sm" id="btn-modal-note-annuler">Annuler</button>
-            <button class="btn btn-green btn-sm" id="btn-modal-note-sauv">Sauvegarder</button>
         </div>
     </div>
-</div>
 
-<!-- MODAL EDIT DATE EXAMEN -->
-<div class="modal-overlay hidden" id="modal-edit-exam">
-    <div class="modal-box">
-        <div class="modal-title">Modifier la date d'examen</div>
-        <div class="modal-module-name" id="modal-edit-nom"></div>
-        <div class="wiz-field" style="margin-top:1rem">
-            <label class="wiz-label" for="modal-edit-date">Nouvelle date</label>
-            <div class="input-box">
-                <input type="date" id="modal-edit-date">
+    <!-- Modal Note Dédiée -->
+    <div class="modal-backdrop hidden" id="modal-note" role="dialog" aria-modal="true" aria-labelledby="modal-note-titre">
+        <div class="modal-dialog-clean">
+            <h3 class="modal-heading" id="modal-note-titre">Notes de révision</h3>
+            <textarea id="modal-note-area" class="modal-textarea-clean" placeholder="Théorèmes, formules ou points clés à revoir..."></textarea>
+            <div class="modal-btn-row">
+                <button class="btn-clean-secondary" id="btn-modal-note-annuler" type="button">Annuler</button>
+                <button class="btn-save-primary" id="btn-modal-note-sauv" type="button">Sauvegarder</button>
             </div>
         </div>
-        <div class="modal-foot">
-            <button class="btn btn-ghost btn-sm" id="btn-modal-edit-annuler">Annuler</button>
-            <button class="btn btn-green btn-sm" id="btn-modal-edit-sauv">Mettre à jour</button>
+    </div>
+
+    <!-- Modal Modifier Date Examen -->
+    <div class="modal-backdrop hidden" id="modal-edit-exam" role="dialog" aria-modal="true" aria-labelledby="modal-edit-title">
+        <div class="modal-dialog-clean">
+            <h3 class="modal-heading" id="modal-edit-title">Date de l'examen</h3>
+            <div class="modal-sub-heading" id="modal-edit-nom"></div>
+            <div class="field-item" style="margin: 16px 0;">
+                <label for="modal-edit-date">Nouvelle date</label>
+                <input type="date" id="modal-edit-date" class="clean-input">
+            </div>
+            <div class="modal-btn-row">
+                <button class="btn-clean-secondary" id="btn-modal-edit-annuler" type="button">Annuler</button>
+                <button class="btn-save-primary" id="btn-modal-edit-sauv" type="button">Mettre à jour</button>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- MENU CONTEXTUEL SESSION -->
-<div class="session-ctx-menu hidden" id="session-ctx-menu">
-    <button class="session-ctx-item" id="ctx-reporter">Reporter cette session</button>
-    <button class="session-ctx-item" id="ctx-note">Ajouter une note</button>
-</div>
+    <!-- Hidden elements for backward-compatibility with Pomodoro & scripts -->
+    <div style="display:none;" aria-hidden="true">
+        <span id="countdown-val"></span>
+        <span id="mobile-countdown"></span>
+        <span id="stat-sessions"></span>
+        <span id="stat-global"></span>
+        <span id="stat-streak"></span>
+        <span id="stat-jours"></span>
+        <span id="today-prog-fill"></span>
+        <span id="pomo-time">25:00</span>
+        <span id="sb-pomo-mode">TRAVAIL</span>
+        <span id="sb-pomo-icon"></span>
+        <span id="pomo-sess-count">0</span>
+    </div>
 
-<!-- FAB Jour libre -->
-<button class="jour-libre-fab" id="btn-jour-libre" aria-label="Déclarer aujourd'hui comme jour libre">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-    Jour libre
-</button>
-
-<script src="../../core/state.js"></script>
-<script src="../../core/ui.js"></script>
-<script src="../../core/planning.js"></script>
-<script src="../../core/storage.js"></script>
-<script src="../pomodoro/pomodoro.js"></script>
-<script src="../filter/filter.js"></script>
-<script src="dashboard-view.js"></script>
-<script src="dashboard.js"></script>
+    <!-- Scripts de l'application -->
+    <script src="../../core/storage.js?v=7"></script>
+    <script src="../../core/state.js?v=7"></script>
+    <script src="../../core/ui.js?v=7"></script>
+    <script src="../../core/planning.js?v=7"></script>
+    <script src="../pomodoro/pomodoro.js?v=7"></script>
+    <script src="dashboard-view.js?v=7"></script>
+    <script src="dashboard.js?v=7"></script>
 </body>
 </html>

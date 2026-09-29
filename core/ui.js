@@ -84,21 +84,16 @@ const UI = (() => {
                 warning: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>`
             };
             const couleurs = {
-                success: 'var(--green)',
-                error:   'var(--red)',
-                info:    '#3B82F6',
-                warning: 'var(--orange)'
+                success: 'var(--color-success)',
+                error:   'var(--color-danger)',
+                info:    'var(--color-info)',
+                warning: 'var(--color-attention)'
             };
             const safeMessage = this.echapperHTML(message);
             const toast = document.createElement('div');
-            toast.style.cssText = `display: flex; align-items: center; gap: 12px; padding: 13px 16px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid ${couleurs[type]}; border-radius: var(--radius-md); box-shadow: var(--shadow-lg); min-width: 260px; max-width: 360px; pointer-events: all; cursor: pointer; animation: slideIn 0.35s var(--ease-back); position: relative; overflow: hidden;`;
-            toast.innerHTML = `<span style="color:${couleurs[type]};width:16px;height:16px;flex-shrink:0;display:flex;">${icones[type]}</span><span style="font-size:13px;font-weight:500;color:var(--text);flex:1;line-height:1.4;">${safeMessage}</span><div style="position:absolute;bottom:0;left:0;height:2px;background:${couleurs[type]};animation:toastBar ${duree}ms linear forwards;"></div>`;
-            if (!document.getElementById('toast-keyframes')) {
-                const style = document.createElement('style');
-                style.id = 'toast-keyframes';
-                style.textContent = `@keyframes toastBar { from { width: 100%; } to { width: 0%; } }`;
-                document.head.appendChild(style);
-            }
+            toast.style.cssText = `display: flex; align-items: center; gap: 12px; padding: 13px 16px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid ${couleurs[type]}; border-radius: var(--radius-md); box-shadow: var(--shadow-lg); min-width: 260px; max-width: 360px; pointer-events: all; cursor: pointer; animation: slideIn var(--duration-normal) var(--ease-back); position: relative; overflow: hidden;`;
+            toast.innerHTML = `<span style="color:${couleurs[type]};width:16px;height:16px;flex-shrink:0;display:flex;">${icones[type]}</span><span style="font-size:var(--text-xs);font-weight:500;color:var(--text-primary);flex:1;line-height:1.4;">${safeMessage}</span><div style="position:absolute;bottom:0;left:0;height:2px;background:${couleurs[type]};animation:toastBar ${duree}ms linear forwards;"></div>`;
+            // NB : @keyframes toastBar est défini dans core/variables.css (Design System)
             const retirer = () => {
                 toast.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
                 toast.style.opacity = '0';
@@ -161,13 +156,7 @@ const UI = (() => {
             if (!el) return;
             el.style.animation = 'none';
             void el.offsetHeight;
-            el.style.animation = 'shake 0.4s ease';
-            if (!document.getElementById('shake-keyframes')) {
-                const style = document.createElement('style');
-                style.id = 'shake-keyframes';
-                style.textContent = `@keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }`;
-                document.head.appendChild(style);
-            }
+            el.style.animation = 'shake 0.4s ease'; // @keyframes shake : core/variables.css
             setTimeout(() => { el.style.animation = ''; }, 400);
         },
         // Confettis de célébration
@@ -177,7 +166,7 @@ const UI = (() => {
                 particleCount: 100,
                 spread: 70,
                 origin: { y: 0.6 },
-                colors: ['#2D9E6B', '#1f7a52', '#E8730A', '#b8deca', '#fff']
+                colors: ['#4F46E5', '#10B981', '#F59E0B', '#A5B4FC', '#FFFFFF'] // palette V3 (canvas)
             });
         },
         // Formater une date en français
@@ -219,14 +208,14 @@ const UI = (() => {
         },
         // Rendu des étoiles de difficulté
         rendreEtoiles(nb, max = 5) {
-            return Array.from({ length: max }, (_, i) => `<span style="color:${i < nb ? 'var(--orange)' : 'var(--border-2)'}">${UI.icone('star', 13)}</span>`).join('');
+            return Array.from({ length: max }, (_, i) => `<span style="color:${i < nb ? 'var(--color-amber)' : 'var(--border-2)'}">${UI.icone('star', 13)}</span>`).join('');
         },
         // Modal de confirmation
         confirmer(message, onOui, onNon = null, labels = { oui: 'Confirmer', non: 'Annuler' }) {
             const safeMessage = this.echapperHTML(message);
             const overlay = document.createElement('div');
-            overlay.style.cssText = `position:fixed; inset:0; background:rgba(15,28,46,0.5); backdrop-filter:blur(4px); z-index:var(--z-modal); display:flex; align-items:center; justify-content:center; animation:fadeIn 0.2s ease;`;
-            overlay.innerHTML = `<div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-xl); padding:2rem; max-width:400px; width:90%; box-shadow:var(--shadow-lg); animation:scaleIn 0.25s var(--ease);"><div style="font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--text); margin-bottom:0.75rem;">Confirmation</div><div style="font-size:14px; color:var(--text-2); line-height:1.6; margin-bottom:1.5rem;">${safeMessage}</div><div style="display:flex; gap:10px; justify-content:flex-end;"><button id="conf-non" class="btn btn-ghost btn-sm">${labels.non}</button><button id="conf-oui" class="btn btn-danger btn-sm">${labels.oui}</button></div></div>`;
+            overlay.style.cssText = `position:fixed; inset:0; background:var(--overlay); backdrop-filter:blur(4px); z-index:var(--z-modal); display:flex; align-items:center; justify-content:center; animation:fadeIn var(--duration-base) var(--ease-out);`;
+            overlay.innerHTML = `<div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-xl); padding:2rem; max-width:400px; width:90%; box-shadow:var(--shadow-lg); animation:scaleIn var(--duration-base) var(--ease);"><div style="font-family:var(--font-display); font-size:var(--text-md); font-weight:700; color:var(--text-primary); margin-bottom:0.75rem;">Confirmation</div><div style="font-size:var(--text-sm); color:var(--text-secondary); line-height:1.6; margin-bottom:1.5rem;">${safeMessage}</div><div style="display:flex; gap:10px; justify-content:flex-end;"><button id="conf-non" class="btn btn-ghost btn-sm">${labels.non}</button><button id="conf-oui" class="btn btn-danger btn-sm">${labels.oui}</button></div></div>`;
             document.body.appendChild(overlay);
             const fermer = () => overlay.remove();
             overlay.querySelector('#conf-oui').addEventListener('click', () => {
